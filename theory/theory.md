@@ -1,16 +1,16 @@
+# TD  OO
+## Question 1
 
-# Question 1
-
-## Exo 1 : 
+### Exo 1 : 
 Le code crée un point x, l'affiche, le déplace, puis l'affiche à nouveau donc en détail : le code crée le point en (0,0), ensuite il l'affiche puis le déplace en (2,2) puis le réaffiche
 
-## Exo 2 :
+### Exo 2 :
 Aucune erreur, car il est bien nommé en .java
 
-## Exo 3 : 
+### Exo 3 : 
 Il aura une visibilité par défaut donc seulement dans le package donc si ils sont dans le meme paquet aucun soucis sinon oui de type :
 error: Point is not public in oo_basics; cannot be accessed from outside package
-## Exo 4 : 
+### Exo 4 : 
 Fait
 
 # Question 2
@@ -153,3 +153,32 @@ le code aura pas d'erreur car c'est public
 Lorsque je remplace Point par Movable, le programme bénéficie du polymorphisme.
 l'affichage sera : (3.0, 4.0)
  
+
+
+# TD REGEX
+
+## Question 1 
+
+### Exo 1 : 
+g\d{5}
+
+### Exo 2 : 
+g\d{5}\s+g\d{5}*
+
+### Exo 3 :
+\
+^Bonjour.merci\\.$
+
+### Exo 4 :
+
+add\s+circle\s+\d+\s+\d+\s+\d+\s+\w
+
+### Exo 5 : 
+
+move\s+\d+\s+-?\d+\s+-?\d
+
+## Question 2
+
+Il contient XX-XX-XXXX
+où x est un nombre de 0 à 9
+donc le groupe zéro contient la correspondance complète de la chaine avec le motif
