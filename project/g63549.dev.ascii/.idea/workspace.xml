@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9c966c93-47e5-49f1-becc-2ac05d3f952b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/src/main/java/model/AsciiPaint.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/src/main/java/model/Circle.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/src/main/java/model/ColoredShape.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/src/main/java/model/Drawing.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/src/main/java/model/Point.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/src/main/java/model/Rectangle.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/src/main/java/model/Shape.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../exercises/g63549.dev.ascii/src/main/java/model/Square.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../theory/theory.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../theory/theory.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2mQBJRUCTpOxsmBhO1pt6zlEgJH" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Point.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="Point" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="model.Point" />
+      <module name="g63549.dev.ascii" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="model.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Point" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-4f524021" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9c966c93-47e5-49f1-becc-2ac05d3f952b" name="Changes" comment="" />
+      <created>1726998850165</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1726998850165</updated>
+      <workItem from="1726998851717" duration="2422000" />
+      <workItem from="1727167267888" duration="739000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

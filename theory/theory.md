@@ -181,4 +181,4 @@ move\s+\d+\s+-?\d+\s+-?\d
 
 Il contient XX-XX-XXXX
 où x est un nombre de 0 à 9
-donc le groupe zéro contient la correspondance complète de la chaine avec le motif
+donc le groupe zéro contient la correspondance complète de la chaine
