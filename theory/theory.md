@@ -182,3 +182,73 @@ move\s+\d+\s+-?\d+\s+-?\d
 Il contient XX-XX-XXXX
 où x est un nombre de 0 à 9
 donc le groupe zéro contient la correspondance complète de la chaine
+
+
+# TD GENERICS
+
+## Question 1
+
+### Exo 1 :
+
+Erreur car le compilateur sait que box ne référence que des entiers et ici on tente d'instancier un double.
+
+### Exo 2 : 
+
+ici le new integer(42) est obsolète. 
+
+## Question 2 
+
+### Exo 1 :
+Non, car Box<Integer> n'est pas un sous-type de Box<Object>. Vous ne pouvez pas écrire Box<Object> box = new Box<Integer>(42);. Cela entraînera une erreur de compilation.
+
+## Question 3 :
+
+### Exo 1 :
+error: incompatible types: Box<Integer> cannot be converted to Box<Object>
+car comme dit au dessus on ne peut pas convertir box<integer> a box<object>
+
+
+### Exo 2 :
+
+à la ligne 11 car on ne peut pas convertir un double à un int
+
+## Question 4 : 
+
+### Exo 1 :
+    la variable box est de type<box> donc le type est inconnu, donc on ne peut pas appeler des méthodes qui dépendent du type générique. donc on peut pas set quoi que ce soit à part null
+## Question 5 
+
+### Exo 1 :
+En enlevant comparable <T> on ne dit pas que le type possede une methode compareTo
+
+## Question 6 
+
+### Exo 1 :
+error: Type argument Number does not conform to the bound(s) of type variable Twhere T is a type-variable:T extends Comparable<T> declared in class Pair. Elle n'est pas dans les variables que T accepte
+
+
+## Question 7 
+
+### Exo 1 :
+List<Object> dest = new ArrayList<Object>();
+List<String> src = new ArrayList<String>();
+Collections.copy(dest, src);
+
+### exo 2 : 
+List<String> list = new ArrayList<>();
+// Ajout de quelques chaînes à la liste
+list.add("Banane");
+list.add("Pomme");
+list.add("Orange");
+
+Comparator<Object> comparator = new Comparator<Object>() {
+    @Override
+    public int compare(Object o1, Object o2) {
+        return o1.toString().compareTo(o2.toString());
+    }
+};
+
+Collections.sort(list, comparator);
+
+
+
