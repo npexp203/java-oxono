@@ -1,60 +1,48 @@
 package model;
 
+/**
+ * The Point class represents a point in a 2D space with x and y coordinates.
+ */
 public class Point {
+    private double x, y;
 
-    private double x;
-    private double y;
-
-    // Constructor
+    /**
+     * Constructor for the Point class.
+     *
+     * @param x The x-coordinate of the point.
+     * @param y The y-coordinate of the point.
+     */
     public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    // Constructor that copies to not modify it
-    public Point(Point p){
-        this.x = p.x;
-        this.y = p.y;
-    }
-    // Method for move the point
-    public void move(double dx, double dy){
-        this.x += dx;
-        this.y += dy;
-    }
-
-    // Method for calculate the distance between 2 points
-    public double distanceTo(Point other) {
-        return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
-    }
-    // Getters for x and y
+    /**
+     * Gets the x-coordinate of the point.
+     *
+     * @return The x-coordinate.
+     */
     public double getX() {
         return x;
     }
 
+    /**
+     * Gets the y-coordinate of the point.
+     *
+     * @return The y-coordinate.
+     */
     public double getY() {
         return y;
     }
 
-    @Override
-    public String toString() {
-        return "Point{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+    /**
+     * Moves the point by specified distances along the x and y axes.
+     *
+     * @param dx The distance to move along the x-axis.
+     * @param dy The distance to move along the y-axis.
+     */
+    public void move(double dx, double dy) {
+        this.x += dx;
+        this.y += dy;
     }
-
-    public static void main(String[] args) {
-        Point p = new Point(1,2);
-        System.out.println(p);
-        Point p1 = new Point(2,3);
-        System.out.println(p1);
-        p.move(1,1);
-        System.out.println(p);
-        System.out.println(p.distanceTo(p1));
-
-
-    }
-
-
 }
-

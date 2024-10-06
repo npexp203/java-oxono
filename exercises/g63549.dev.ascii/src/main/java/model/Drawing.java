@@ -1,29 +1,54 @@
 package model;
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.ArrayList;
 
+/**
+ * The Drawing class represents a collection of shapes.
+ * It provides methods to add, remove, and retrieve shapes from the drawing.
+ */
 public class Drawing {
-    private int width, height; // Dimensions of the drawing
-    private List<Shape> shapes; // List to store shapes
+    private int width, height;
+    private List<Shape> shapes;
 
-    // Constructor for Drawing
+    /**
+     * Constructor for the Drawing class.
+     *
+     * @param width  The width of the drawing.
+     * @param height The height of the drawing.
+     */
     public Drawing(int width, int height) {
         this.width = width;
         this.height = height;
-        this.shapes = new ArrayList<>(); // Initialize the list of shapes
+        this.shapes = new ArrayList<>();
     }
 
-    //  Method to add a shape to the drawing
-    protected void addShape(Shape shape) {
+    /**
+     * Adds a shape to the drawing.
+     *
+     * @param shape The shape to add.
+     */
+    public void addShape(Shape shape) {
         shapes.add(shape);
     }
 
-    // Method to remove a shape from the drawing
-    protected boolean removeShape(Shape shape) {
-        return shapes.remove(shape); // Returns true if the shape was in the list and was removed
+    /**
+     * Removes a shape from the drawing.
+     *
+     * @param shape The shape to remove.
+     * @return True if the shape was removed, false otherwise.
+     */
+    public boolean removeShape(Shape shape) {
+        return shapes.remove(shape);
     }
-    //Remove a shape by index
-    protected boolean removeShape(int index) {
+
+    /**
+     * Removes a shape from the drawing by index.
+     *
+     * @param index The index of the shape to remove.
+     * @return True if the shape was removed, false otherwise.
+     */
+    public boolean removeShape(int index) {
         if (index >= 0 && index < shapes.size()) {
             shapes.remove(index);
             return true;
@@ -31,16 +56,27 @@ public class Drawing {
         return false;
     }
 
-    // Method to get a shape at a specific point
+    /**
+     * Gets the shape at a specific point.
+     *
+     * @param point The point to check.
+     * @return The shape at the point, or null if no shape is found.
+     */
     public Shape getShapeAt(Point point) {
         for (Shape shape : shapes) {
             if (shape.isInside(point)) {
-                return shape; // Returns the first shape for which the point is inside
+                return shape;
             }
         }
-        return null; // Returns null if no shape contains the point
+        return null;
     }
-    // Method to get a shape by index
+
+    /**
+     * Gets the shape at a specific index.
+     *
+     * @param index The index of the shape.
+     * @return The shape at the specified index, or null if the index is out of bounds.
+     */
     public Shape getShapeAt(int index) {
         if (index >= 0 && index < shapes.size()) {
             return shapes.get(index);
@@ -48,17 +84,30 @@ public class Drawing {
         return null;
     }
 
-    // Getters for width and height
+    /**
+     * Gets a list of all shapes in the drawing.
+     *
+     * @return A list of all shapes.
+     */
+    public List<Shape> getShapes() {
+        return new ArrayList<>(shapes);
+    }
+
+    /**
+     * Gets the width of the drawing.
+     *
+     * @return The width of the drawing.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Gets the height of the drawing.
+     *
+     * @return The height of the drawing.
+     */
     public int getHeight() {
         return height;
-    }
-
-    // Method to list all shapes in the drawing
-    public List<Shape> getShapes() {
-        return new ArrayList<>(shapes); // Returns a copy of the list of shapes
     }
 }
