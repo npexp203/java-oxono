@@ -175,7 +175,7 @@ public class AsciiController {
      * @param args Command line arguments (not used).
      */
     public static void main(String[] args) {
-        AsciiPaint paint = new AsciiPaint(50, 30); 
+        AsciiPaint paint = new AsciiPaint(50, 30);
         AsciiView view = new AsciiView();
         AsciiController controller = new AsciiController(paint, view);
         controller.start();
