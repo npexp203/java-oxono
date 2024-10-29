@@ -34,7 +34,6 @@ public class WeatherController {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode root = mapper.readTree(response.body());
 
-                // Extraire la latitude et la longitude du premier résultat
                 if (root.isArray() && root.size() > 0) {
                     double latitude = root.get(0).get("lat").asDouble();
                     double longitude = root.get(0).get("lon").asDouble();
@@ -88,6 +87,6 @@ public class WeatherController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null; // Si erreur ou données non trouvées
+        return null;
     }
 }
