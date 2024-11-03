@@ -1,38 +1,42 @@
 package g63549.dev.meteo.controller;
 
-import g63549.dev.meteo.model.*;
-import g63549.dev.meteo.view.MainView;
-
+import g63549.dev.meteo.model.Model;
+import g63549.dev.meteo.model.WeatherObject;
+import g63549.dev.meteo.view.WeatherView;
 import java.time.LocalDate;
 
+/**
+ * Controller handles requests from the view, fetches data from the model,
+ * and updates the view with the retrieved weather information.
+ */
 public class Controller {
 
     private final Model model;
-    private final MainView view;
 
-    public Controller(gmodel.Model model, MainView view) {
-        this.model = model;
-        this.view = view;
-        this.view.setController(this); // Lien avec la vue pour les actions
+    /**
+     * Constructs a Controller with a given model.
+     */
+    public Controller() {
+        this.model = new Model();
     }
 
     /**
-     * Action déclenchée lorsque l'utilisateur demande les données météo.
+     * Fetches the weather data for a given city and date, and updates the view.
      *
-     * @param address L'adresse saisie par l'utilisateur.
-     * @param date    La date pour laquelle l'utilisateur souhaite obtenir la météo.
+     * @param city the city for which to fetch weather data
+     * @param date the date for which to fetch weather data
+     * @param weatherView the view to update with the weather data
      */
-    public void actionFetch(String address, LocalDate date) {
+    public void fetchWeather(String city, LocalDate date, WeatherView weatherView) {
         try {
-            // Récupération des données via le modèle
-            WeatherObject weatherData = model.fetchWeather(address, date);
+            // Récupère les données météo à partir du modèle
+            WeatherObject weatherData = model.fetchWeather(city, date);
 
-            // Mise à jour de la vue avec les données reçues
-            view.update(weatherData);
-
+            // Mise à jour de la vue avec les données récupérées
+            weatherView.displayWeather(weatherData);
         } catch (Exception e) {
-            // Gestion des erreurs en affichant un message d'erreur dans la vue
-            view.showError("Failed to fetch weather data: " + e.getMessage());
+            // En cas d’erreur, affiche un message d’erreur dans la vue
+            weatherView.setResultText("Error fetching weather data: " + e.getMessage());
         }
     }
 }

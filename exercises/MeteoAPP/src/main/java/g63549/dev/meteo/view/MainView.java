@@ -1,46 +1,41 @@
 package g63549.dev.meteo.view;
 
 import g63549.dev.meteo.controller.Controller;
-import g63549.dev.meteo.model.WeatherObject;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 
-import java.time.LocalDate;
+public class MainView extends BorderPane {
+    private final InputView inputView;
+    private final WeatherView weatherView;
+    private final Controller controller;
 
-public class MainView extends VBox {
+    public MainView() {
+        this.inputView = new InputView();
+        this.weatherView = new WeatherView();
+        this.controller = new Controller();
 
-    private final InputView inputView = new InputView();
-    private final WeatherView weatherView = new WeatherView();
-    private Controller controller;
+        VBox centerBox = new VBox(20, weatherView);
+        centerBox.setAlignment(Pos.CENTER);
+        centerBox.setPadding(new Insets(15));
 
-    public MainView(Stage stage) {
-        Button fetchButton = new Button("Fetch Weather");
-        fetchButton.setOnAction(e -> fetchWeather());
+        setCenter(centerBox);
+        setBottom(inputView);
 
-        this.getChildren().addAll(inputView, fetchButton, weatherView);
-        Scene scene = new Scene(this, 400, 400);
-        stage.setScene(scene);
-        stage.show();
+        // Attacher l'action du bouton au contrôleur
+        inputView.getFetchButton().setOnAction(e -> handleFetchWeather());
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
+    private void handleFetchWeather() {
+        String city = inputView.getAddress();
+        var date = inputView.getDate();
+
+        if (city.isEmpty() || date == null) {
+            weatherView.setResultText("Please enter a city and select a date.");
+            return;
+        }
+
+        controller.fetchWeather(city, date, weatherView);
     }
-
-    private void fetchWeather() {
-        String address = inputView.getAddress();
-        LocalDate date = inputView.getDate();
-        controller.actionFetch(address, date);
-    }
-
-    public void update(WeatherObject weatherData) {
-        weatherView.setLocality(weatherData.locality());
-        weatherView.setTempMin(weatherData.tempMin());
-        weatherView.setTempMax(weatherData.tempMax());
-        weatherView.setImage(weatherData.weatherCode());
-    }
-
-
 }

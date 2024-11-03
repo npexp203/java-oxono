@@ -13,7 +13,7 @@ public class WeatherApi {
 
     private static final String OSM_API_URL = "https://nominatim.openstreetmap.org/search.php?q=";
     private static final String OSM_API_FORMAT = "&format=jsonv2";
-    private static final String METEO_API_URL = "https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s&daily=temperature_2m_min,temperature_2m_max&timezone=Europe/Brussels";
+    private static final String METEO_API_URL = "https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s&daily=temperature_2m_min,temperature_2m_max&start_date=%s&end_date=%s&timezone=Europe/Brussels";
 
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -43,7 +43,9 @@ public class WeatherApi {
     }
 
     private static WeatherObject fetchWeatherData(double latitude, double longitude, String address, LocalDate date) throws IOException, InterruptedException {
-        String url = String.format(METEO_API_URL, latitude, longitude);
+        String dateParam = date.toString();
+        String url = String.format(METEO_API_URL, latitude, longitude, dateParam, dateParam);
+        System.out.println("URL de la requête : " + url);
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -55,8 +57,7 @@ public class WeatherApi {
 
         double tempMin = jsonNode.get("temperature_2m_min").get(0).asDouble();
         double tempMax = jsonNode.get("temperature_2m_max").get(0).asDouble();
-        // Assure-toi que le code météo correspond bien au format attendu dans ton API
-        int weatherCode = 800; // Exemple par défaut, si l'API ne fournit pas un code spécifique
+        int weatherCode = 800;
 
         return new WeatherObject(address, date, weatherCode, tempMin, tempMax);
     }
