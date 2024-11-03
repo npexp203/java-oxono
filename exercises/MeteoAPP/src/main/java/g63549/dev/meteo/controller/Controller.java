@@ -29,13 +29,10 @@ public class Controller {
      */
     public void fetchWeather(String city, LocalDate date, WeatherView weatherView) {
         try {
-            // Récupère les données météo à partir du modèle
             WeatherObject weatherData = model.fetchWeather(city, date);
 
-            // Mise à jour de la vue avec les données récupérées
             weatherView.displayWeather(weatherData);
         } catch (Exception e) {
-            // En cas d’erreur, affiche un message d’erreur dans la vue
             weatherView.setResultText("Error fetching weather data: " + e.getMessage());
         }
     }

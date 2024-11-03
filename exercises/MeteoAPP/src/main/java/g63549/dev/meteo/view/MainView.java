@@ -23,7 +23,6 @@ public class MainView extends BorderPane {
         setCenter(centerBox);
         setBottom(inputView);
 
-        // Attacher l'action du bouton au contrôleur
         inputView.getFetchButton().setOnAction(e -> handleFetchWeather());
     }
 
