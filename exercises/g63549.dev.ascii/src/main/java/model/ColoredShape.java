@@ -1,6 +1,6 @@
 package model;
 
-public abstract class ColoredShape extends Shape {
+public abstract class ColoredShape implements Shape {
 
     private char color;
     public ColoredShape(char color) {

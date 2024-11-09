@@ -12,7 +12,7 @@ import java.util.Arrays;
  * The AsciiView class is responsible for displaying the current state of the AsciiPaint drawing.
  * It provides a method to visualize the drawing using ASCII characters.
  */
-public class AsciiView {
+public class    AsciiView {
 
     /**
      * Displays the current state of the drawing on the console.

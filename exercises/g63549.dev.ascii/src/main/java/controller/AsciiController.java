@@ -148,6 +148,9 @@ public class AsciiController {
             }
         } else if ("show".equalsIgnoreCase(command)) {
             view.display(model.getDrawing());
+            
+        } else if (command.startsWith("redo")) {
+            
         } else {
             System.out.println("Unknown command. Available commands: add circle, add rectangle, add square, move, color, delete, list, show, quit");
         }

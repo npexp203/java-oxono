@@ -1,7 +1,13 @@
 package model;
 
+import command.CommandManager;
+
+import java.util.List;
+
 public class AsciiPaint {
     private Drawing drawing;
+    private CommandManager commandManager = new CommandManager();
+
 
     /**
      * Constructor for AsciiPaint.
@@ -24,7 +30,8 @@ public class AsciiPaint {
      */
     public void addCircle(int x, int y, double radius, char color) {
         Circle circle = new Circle(new Point(x, y), radius, color);
-        drawing.addShape(circle);
+        AddCommand addCommand = new AddCommand(drawing, circle);
+        commandManager.doCommand(addCommand);
     }
 
     /**
@@ -69,13 +76,30 @@ public class AsciiPaint {
         }
     }
 
-    // Method to remove a shape at a specified point
     public void removeShape(int x, int y) {
-        Shape shape = drawing.getShapeAt(new Point(x, y));
-        if (shape != null) {
-            drawing.removeShape(shape);
+        Point point = new Point(x, y);
+
+        Shape shapeToRemove = drawing.getShapeAt(point);
+
+        if (shapeToRemove != null) {
+            List<Shape> shapes = drawing.getShapes();
+            int index = -1;
+            for (int i = 0; i < shapes.size(); i++) {
+                if (shapes.get(i) == shapeToRemove) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index != -1) {
+                DeleteCommand deleteCommand = new DeleteCommand(drawing, index);
+                commandManager.doCommand(deleteCommand);
+            }
         }
     }
+
+
+
 
     // Getters
     public Drawing getDrawing() {
