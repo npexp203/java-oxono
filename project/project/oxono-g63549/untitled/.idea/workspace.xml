@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d7b68277-d353-4869-a257-8bc7318fc2c1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../../exercises/MeteoAPP/src/main/java/g63549/dev/meteo/model/WeatherApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../exercises/MeteoAPP/src/main/java/g63549/dev/meteo/model/WeatherApi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../exercises/MeteoAPP/src/main/resources/08h30.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../exercises/MeteoAPP/src/main/resources/12h30.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../exercises/MeteoAPP/src/main/resources/2024-bilan-08h00.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../exercises/MeteoAPP/src/main/resources/2024-bilan-10h30.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../exercises/MeteoAPP/src/main/resources/2024-bilan-16h00.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/.idea/oxono-g63549.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/oxono-g63549.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/.idea/uiDesigner.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/uiDesigner.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/src/main/java/model/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/model/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/src/main/java/model/Color.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/model/Color.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/src/main/java/model/GameModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/model/GameModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/src/main/java/model/Pieces.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/model/Pieces.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/src/main/java/model/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/model/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/src/main/java/model/Symbol.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/model/Symbol.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../oxono-g63549/oxono-g63549/src/main/java/model/Totems.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/model/Totems.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="2okJq0qhpUWdYxMI0yTsAiHYwDS" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d7b68277-d353-4869-a257-8bc7318fc2c1" name="Changes" comment="" />
+      <created>1731407828137</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1731407828137</updated>
+    </task>
+    <servers />
+  </component>
+</project>

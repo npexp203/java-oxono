@@ -29,7 +29,7 @@ public class Controller {
      */
     public void fetchWeather(String city, LocalDate date, WeatherView weatherView) {
         try {
-            WeatherObject weatherData = model.fetchWeather(city, date);
+            WeatherObject weatherData = model.fetch(city, date);
 
             weatherView.displayWeather(weatherData);
         } catch (Exception e) {

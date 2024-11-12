@@ -11,4 +11,4 @@ import java.time.LocalDate;
  * @param tempMin    the minimum temperature
  * @param tempMax    the maximum temperature
  */
-public record WeatherObject(String locality, LocalDate date, Integer weatherCode, double tempMin, double tempMax) {}
+public record WeatherObject(String locality, LocalDate date, int weatherCode, double tempMin, double tempMax) {}
