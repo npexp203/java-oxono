@@ -6,14 +6,13 @@ import java.util.List;
 public class Pieces {
 
     private char totemsSymbol;
-    private List<Pieces> piecesList;
+    private List<Piece> piecesList;
 
-    public Pieces() {
-        piecesList = new ArrayList<>(16);
+    public Pieces(Symbol symbol,Color color) {
+        piecesList = new ArrayList<Piece>(16);
         for (int i = 0; i < 8; i++) {
-            piecesList.add(new Pieces(Symbol.X,Color.PINK));
-
-
+            piecesList.add(new Piece(Symbol.X,color));
+            piecesList.add(new Piece(Symbol.O,color));
         }
 
     }

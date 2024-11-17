@@ -3,42 +3,41 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Group implements Shape {
-    private List<Shape> shapes;
-    private char color;
+/**
+ * Represents a group of shapes.
+ * Implements the Composite Pattern to manage multiple shapes as one.
+ */
+public class        Group extends ColoredShape {
+    private List<Shape> shapes = new ArrayList<>();
 
     /**
-     * Constructor for the Group class.
-     * Initializes the group with a specified color.
-     *
-     * @param color The character representing the color of the group.
+     * Constructs a group with a specific color.
+     * @param color the color of the group
      */
     public Group(char color) {
-        this.shapes = new ArrayList<>();
-        this.color = color;
+        super(color);
     }
 
     /**
-     * Checks if a point is inside any shape in the group.
-     *
-     * @param p The point to check.
-     * @return True if the point is inside any shape in th  e group, false otherwise.
+     * Adds a shape to the group.
+     * @param shape the shape to add
      */
-    @Override
-    public boolean isInside(Point p) {
-        for (Shape shape : shapes) {
-            if (shape.isInside(p)) {
-                return true;
-            }
-        }
-        return false;
+    public void addShape(Shape shape) {
+        shapes.add(shape);
     }
 
     /**
-     * Moves all shapes in the group by the specified distances.
-     *
-     * @param dx The horizontal distance to move.
-     * @param dy The vertical distance to move.
+     * Retrieves the shapes in the group.
+     * @return a list of shapes in the group
+     */
+    public List<Shape> getShapes() {
+        return shapes;
+    }
+
+    /**
+     * Moves all shapes in the group by the given offsets.
+     * @param dx the offset along the x-axis
+     * @param dy the offset along the y-axis
      */
     @Override
     public void move(double dx, double dy) {
@@ -48,43 +47,17 @@ public class Group implements Shape {
     }
 
     /**
-     * Adds a shape to the group.
-     *
-     * @param shape The shape to add.
-     */
-    void addShape(Shape shape) {
-        shapes.add(shape);
-    }
-
-    /**
-     * Gets the list of shapes in the group.
-     *
-     * @return A list of shapes in the group.
-     */
-    List<Shape> getShapes() {
-        return new ArrayList<>(shapes);
-    }
-
-    /**
-     * Sets the color for the group and all contained shapes.
-     *
-     * @param color The character representing the color to set.
+     * Checks if the group contains the specified point.
+     * @param p the point to check
+     * @return true if any shape in the group contains the point, false otherwise
      */
     @Override
-    public void setColor(char color) {
-        this.color = color;
+    public boolean isInside(Point p) {
         for (Shape shape : shapes) {
-            shape.setColor(color);
+            if (shape.isInside(p)) {
+                return true;
+            }
         }
-    }
-
-    /**
-     * Gets the color of the group.
-     *
-     * @return The character representing the color of the group.
-     */
-    @Override
-    public char getColor() {
-        return this.color;
+        return false;
     }
 }

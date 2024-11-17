@@ -1,186 +1,121 @@
 package controller;
 
+import command.CommandManager;
 import model.AsciiPaint;
-import model.Shape;
-import view.AsciiView;
-import model.*;
+import model.Group;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * The AsciiController class is responsible for handling user inputs and coordinating
- * interactions between the model (AsciiPaint) and the view (AsciiView).
+ * Controller for the AsciiPaint application.
+ * Handles user inputs and delegates actions to the model and CommandManager.
  */
 public class AsciiController {
-
-    private AsciiPaint model;
-    private AsciiView view;
-    private Scanner scanner;
+    private final AsciiPaint asciiPaint;
+    private final CommandManager commandManager;
 
     /**
-     * Constructor for the AsciiController class.
-     *
-     * @param model The AsciiPaint model that contains the drawing data.
-     * @param view  The AsciiView view used to display the drawing.
+     * Constructs the AsciiController with the model and command manager.
+     * @param asciiPaint the AsciiPaint model
+     * @param commandManager the command manager
      */
-    public AsciiController(AsciiPaint model, AsciiView view) {
-        this.model = model;
-        this.view = view;
-        this.scanner = new Scanner(System.in);
+    public AsciiController(AsciiPaint asciiPaint, CommandManager commandManager) {
+        this.asciiPaint = asciiPaint;
+        this.commandManager = commandManager;
     }
 
     /**
-     * Starts the controller and listens for user commands.
+     * Starts the application and handles user input.
      */
     public void start() {
-        String command;
-        System.out.println("Enter commands to manipulate the drawing or 'quit' to exit.");
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Welcome to AsciiPaint!");
+        String input;
 
         while (true) {
-            System.out.print("> ");
-            command = scanner.nextLine().trim();
+            System.out.print("Enter command: ");
+            input = scanner.nextLine().trim();
 
-            if ("quit".equalsIgnoreCase(command)) {
+            if (input.equals("exit")) {
+                System.out.println("Exiting AsciiPaint. Goodbye!");
                 break;
             }
 
-            processCommand(command);
+            try {
+                handleCommand(input);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
         }
 
         scanner.close();
-        System.out.println("Thank you for using AsciiPaint!");
     }
 
     /**
-     * Processes a given command entered by the user.
-     *
-     * @param command The command entered by the user.
+     * Parses and handles user commands.
+     * @param input the user command
      */
-    private void processCommand(String command) {
-        if (command.startsWith("add circle")) {
-            Pattern pattern = Pattern.compile("add circle (\\d+) (\\d+) (\\d+) (\\w)");
-            Matcher matcher = pattern.matcher(command);
-            if (matcher.find()) {
-                int x = Integer.parseInt(matcher.group(1));
-                int y = Integer.parseInt(matcher.group(2));
-                int radius = Integer.parseInt(matcher.group(3));
-                char color = matcher.group(4).charAt(0);
-                model.addCircle(x, y, radius, color);
-                System.out.println("Circle added.");
-            } else {
-                System.out.println("Invalid command. Usage: add circle <x> <y> <radius> <color>");
-            }
-        } else if (command.startsWith("add rectangle")) {
-            Pattern pattern = Pattern.compile("add rectangle (\\d+) (\\d+) (\\d+) (\\d+) (\\w)");
-            Matcher matcher = pattern.matcher(command);
-            if (matcher.find()) {
-                int x = Integer.parseInt(matcher.group(1));
-                int y = Integer.parseInt(matcher.group(2));
-                int width = Integer.parseInt(matcher.group(3));
-                int height = Integer.parseInt(matcher.group(4));
-                char color = matcher.group(5).charAt(0);
-                model.addRectangle(x, y, width, height, color);
-                System.out.println("Rectangle added.");
-            } else {
-                System.out.println("Invalid command. Usage: add rectangle <x> <y> <width> <height> <color>");
-            }
-        } else if (command.startsWith("add square")) {
-            Pattern pattern = Pattern.compile("add square (\\d+) (\\d+) (\\d+) (\\w)");
-            Matcher matcher = pattern.matcher(command);
-            if (matcher.find()) {
-                int x = Integer.parseInt(matcher.group(1));
-                int y = Integer.parseInt(matcher.group(2));
-                int side = Integer.parseInt(matcher.group(3));
-                char color = matcher.group(4).charAt(0);
-                model.addSquare(x, y, side, color);
-                System.out.println("Square added.");
-            } else {
-                System.out.println("Invalid command. Usage: add square <x> <y> <side> <color>");
-            }
-        } else if (command.equalsIgnoreCase("list")) {
-            listShapes();
-        } else if (command.startsWith("move ")) {
-            Pattern pattern = Pattern.compile("move (\\d+) (\\d+) (\\d+)");
-            Matcher matcher = pattern.matcher(command);
-            if (matcher.find()) {
-                int index = Integer.parseInt(matcher.group(1));
-                int dx = Integer.parseInt(matcher.group(2));
-                int dy = Integer.parseInt(matcher.group(3));
-                if (model.getDrawing().getShapeAt(index) != null) {
-                    model.getDrawing().getShapeAt(index).move(dx, dy);
-                    System.out.println("Shape moved.");
-                } else {
-                    System.out.println("No shape found at the specified index.");
-                }
-            } else {
-                System.out.println("Invalid command. Usage: move <index> <dx> <dy>");
-            }
-        } else if (command.startsWith("color ")) {
-            Pattern pattern = Pattern.compile("color (\\d+) (\\w)");
-            Matcher matcher = pattern.matcher(command);
-            if (matcher.find()) {
-                int index = Integer.parseInt(matcher.group(1));
-                char color = matcher.group(2).charAt(0);
-                if (model.getDrawing().getShapeAt(index) != null) {
-                    model.getDrawing().getShapeAt(index).setColor(color);
-                    System.out.println("Shape color updated.");
-                } else {
-                    System.out.println("No shape found at the specified index.");
-                }
-            } else {
-                System.out.println("Invalid command. Usage: color <index> <color>");
-            }
-        } else if (command.startsWith("delete ")) {
-            Pattern pattern = Pattern.compile("delete (\\d+)");
-            Matcher matcher = pattern.matcher(command);
-            if (matcher.find()) {
-                int index = Integer.parseInt(matcher.group(1));
-                boolean removed = model.getDrawing().removeShape(index);
-                if (removed) {
-                    System.out.println("Shape deleted.");
-                } else {
-                    System.out.println("No shape found at the specified index.");
-                }
-            } else {
-                System.out.println("Invalid command. Usage: delete <index>");
-            }
-        } else if ("show".equalsIgnoreCase(command)) {
-            view.display(model.getDrawing());
-            
-        } else if (command.startsWith("redo")) {
-            
-        } else {
-            System.out.println("Unknown command. Available commands: add circle, add rectangle, add square, move, color, delete, list, show, quit");
+    private void handleCommand(String input) {
+        String[] parts = input.split("\\s+");
+        String command = parts[0];
+
+        switch (command) {
+            case "group":
+                handleGroupCommand(parts);
+                break;
+            case "ungroup":
+                handleUngroupCommand(parts);
+                break;
+            case "undo":
+                commandManager.undo();
+                System.out.println("Undo successful.");
+                break;
+            case "redo":
+                commandManager.redo();
+                System.out.println("Redo successful.");
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown command: " + command);
         }
     }
 
     /**
-     * Lists all shapes in the drawing.
+     * Handles the group command.
+     * @param parts the command parts
      */
-    private void listShapes() {
-        Drawing drawing = model.getDrawing();
-        if (drawing.getShapes().isEmpty()) {
-            System.out.println("No shapes in the drawing.");
-        } else {
-            for (int i = 0; i < drawing.getShapes().size(); i++) {
-                Shape shape = drawing.getShapes().get(i);
-                String shapeType = shape.getClass().getSimpleName();
-                System.out.println(i + ": " + shapeType + " (Color: " + shape.getColor() + ")");
-            }
+    private void handleGroupCommand(String[] parts) {
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("Usage: group <index1> <index2> ...");
         }
+
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 1; i < parts.length; i++) {
+            indices.add(Integer.parseInt(parts[i]));
+        }
+
+        Group newGroup = asciiPaint.group(indices);
+        System.out.println("Grouped shapes into a new group with ID: " + asciiPaint.getShapes().indexOf(newGroup));
     }
 
     /**
-     * Main method to start the AsciiPaint application with the controller.
-     *
-     * @param args Command line arguments (not used).
+     * Handles the ungroup command.
+     * @param parts the command parts
      */
-    public static void main(String[] args) {
-        AsciiPaint paint = new AsciiPaint(50, 30);
-        AsciiView view = new AsciiView();
-        AsciiController controller = new AsciiController(paint, view);
-        controller.start();
+    private void handleUngroupCommand(String[] parts) {
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Usage: ungroup <groupIndex>");
+        }
+
+        int groupIndex = Integer.parseInt(parts[1]);
+        if (groupIndex < 0 || groupIndex >= asciiPaint.getShapes().size() ||
+                !(asciiPaint.getShapes().get(groupIndex) instanceof Group)) {
+            throw new IllegalArgumentException("Invalid group index.");
+        }
+
+        Group group = (Group) asciiPaint.getShapes().get(groupIndex);
+        asciiPaint.ungroup(group);
+        System.out.println("Ungrouped shapes from group with ID: " + groupIndex);
     }
 }
