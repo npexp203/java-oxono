@@ -10,8 +10,18 @@ public class Board {
     }
 
     public void putPieces(int x, int y, Pieces pieces) {
-        board[x][y] = pieces;
+        if (isValidCoordinate(x,y)){
+            board[x][y] = pieces;
+        }
+        else {
+            throw new IllegalArgumentException("Invalid coordinates: (" + x + ", " + y + ")");
+            }
 
+        }
+
+    }
+    public boolean isValidCoordinate(int x, int y){
+        return x >= 0 && x < board.length && y >= 0 && y < board[0].length
     }
 
     public boolean isFull() {
