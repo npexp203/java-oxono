@@ -4,34 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BagPiece {
-    private List<Piece> pieces;
-    private final Color color;
+    private List<Piece> bagPiece;
 
     public BagPiece(Color color) {
-        this.color = color;
-        pieces = new ArrayList<>(8);
+        bagPiece = new ArrayList<>(16);
         for (int i = 0; i < 8; i++) {
-            pieces.add(new Piece(color, Symbol.O));
-            pieces.add(new Piece(color, Symbol.X));
+            bagPiece.add(new Token(color, Symbol.O));
+            bagPiece.add(new Token(color, Symbol.X));
         }
-
     }
 
-    public Piece removePieceFromBag(Symbol symbol){
-        for (Piece p : pieces){
-            if(p.getSymbol() == symbol){
-                pieces.remove(p);
+    public Piece removePieceFromBag(Symbol symbol) {
+        for (Piece p : bagPiece) {
+            if (p.getSymbol() == symbol) {
+                bagPiece.remove(p);
                 return p;
             }
         }
         throw new IllegalStateException("No piece with symbol " + symbol + " available.");
-
     }
-    public void reset() {
-        pieces.clear();
-        for (int i = 0; i < 8; i++) {
-            pieces.add(new Piece(color, Symbol.O));
-            pieces.add(new Piece(color, Symbol.X));
+    // Dans BagPiece
+    public int countSymbol(Symbol symbol) {
+        int count = 0;
+        for (Piece p : bagPiece) {
+            if (p.getSymbol() == symbol) {
+                count++;
+            }
         }
+        return count;
     }
+
+
 }

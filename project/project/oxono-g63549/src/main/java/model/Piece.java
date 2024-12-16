@@ -1,6 +1,6 @@
 package model;
 
-public class Piece {
+public abstract class Piece {
     private final Color color;
     private final Symbol symbol;
 
@@ -18,16 +18,8 @@ public class Piece {
         return color;
     }
 
-    public Symbol getSymbol() {
+    public  Symbol getSymbol() {
         return symbol;
-    }
-
-
-    public boolean comparePieceSymbol(Symbol symbol){
-        return this.symbol == symbol;
-    }
-    public boolean matches(Color color, Symbol symbol){
-        return this.color == color && this.symbol == symbol;
     }
 
     @Override
@@ -37,4 +29,5 @@ public class Piece {
                 ", symbol=" + symbol +
                 '}';
     }
+
 }
