@@ -1,3 +1,11 @@
+/**
+ * This class implements a random move strategy for the Gomoku game.
+ * It extends the abstract class MoveStrategy and implements the method calculateMove,
+ * which returns a random valid move for the current state of the game.
+ * The method play is not implemented.
+ * @author Florian
+ */
+
 package model;
 
 import Util.MoveStrategy;
@@ -8,34 +16,46 @@ import java.util.Random;
 public class RandomMoveStrategy implements MoveStrategy {
     private Random random = new Random();
 
+    /**
+     * Calculates a random valid move for the current state of the game.
+     * @param gameModel The current state of the game.
+     * @return A random valid move for the current state of the game.
+     */
     @Override
     public Move calculateMove(GameModel gameModel) {
-        // Choix aléatoire entre Symbol.X et Symbol.O
         Symbol chosenSymbol = random.nextBoolean() ? Symbol.X : Symbol.O;
         Totem chosenTotem = (chosenSymbol == Symbol.X) ? gameModel.getTotemX() : gameModel.getTotemO();
 
-        // Positions valides pour le totem
         List<Position> validTotemMoves = gameModel.getBoard().getValidTotemPositions(chosenTotem);
+        System.out.println(validTotemMoves);
         Position startPos = gameModel.getBoard().findTotemPosition(chosenTotem);
 
         Position totemTarget;
         if (validTotemMoves.isEmpty()) {
-            // Pas de déplacement possible, le totem reste sur place
             totemTarget = startPos;
         } else {
-            // Choisir une position au hasard
             totemTarget = validTotemMoves.get(random.nextInt(validTotemMoves.size()));
         }
 
-        // Maintenant, on calcule les positions valides pour le token autour de la position cible du totem (totemTarget)
         List<Position> validTokenPlacements = GameRules.getValidTokenPositionsForPosition(gameModel.getBoard(), totemTarget);
+        System.out.println(validTokenPlacements);
 
         Position tokenTarget = null;
         if (!validTokenPlacements.isEmpty()) {
             tokenTarget = validTokenPlacements.get(random.nextInt(validTokenPlacements.size()));
         }
-
+        System.out.println(totemTarget);
+        System.out.println(tokenTarget);
+        System.out.println(chosenSymbol);
         return new Move(totemTarget, tokenTarget, chosenSymbol);
     }
-}
 
+    /**
+     * Does nothing, as this class is only used for testing purposes.
+     * @param gameModel The current state of the game.
+     */
+    @Override
+    public void play(GameModel gameModel) {
+
+    }
+}

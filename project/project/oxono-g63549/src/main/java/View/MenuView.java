@@ -37,7 +37,7 @@ public class MenuView extends HBox {
         RedoButton = new Button("Redo");
         RedoButton.setOnAction(e -> controller.redo());
 
-        getChildren().addAll(new Label("Taille:"), boardSizeField, new Label("Niveau IA:"), aiLevelCombo, startButton, forfeitButton);
+        getChildren().addAll(new Label("Taille:"), boardSizeField, new Label("Niveau IA:"), aiLevelCombo, startButton, UndoButton, RedoButton, forfeitButton);
     }
 }
 

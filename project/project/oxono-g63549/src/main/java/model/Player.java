@@ -33,9 +33,6 @@ public class Player {
         return moveStrategy;
     }
 
-    public void setMoveStrategy(MoveStrategy moveStrategy) {
-        this.moveStrategy = moveStrategy;
-    }
 
     public boolean isAutomated() {
         return moveStrategy != null;

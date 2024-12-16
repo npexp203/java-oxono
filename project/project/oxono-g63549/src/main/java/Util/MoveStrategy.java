@@ -5,11 +5,11 @@ import model.Move;
 
 public interface MoveStrategy {
     /**
-     * Calcule le prochain mouvement de l'adversaire.
+     * Computes the next move for the opponent.
      *
-     * @param gameModel Le modèle du jeu.
-     * @return Une action décrite par un objet ou une liste de positions (totem + token).
+     * @param gameModel The game model.
+     * @return An action described by an object or a list of positions (totem + token).
      */
     Move calculateMove(GameModel gameModel);
+    void play(GameModel gameModel);
 }
-

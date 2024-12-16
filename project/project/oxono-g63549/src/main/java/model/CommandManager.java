@@ -15,7 +15,7 @@ public class CommandManager {
         command.execute();
         if (command.isReversible()) {
             undoStack.push(command);
-            redoStack.clear(); // Clear redo stack when a new command is executed
+            redoStack.clear();
         }
     }
 

@@ -8,6 +8,12 @@ import model.GameModel;
 
 public class Main extends Application {
 
+    /**
+     * Starts the JavaFX application.
+     *
+     * @param primaryStage The main application window.
+     * @throws Exception    If an error occurs while starting the application.
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         GameModel model = new GameModel();
@@ -22,6 +28,6 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        Application.launch(Main.class, args);
     }
 }

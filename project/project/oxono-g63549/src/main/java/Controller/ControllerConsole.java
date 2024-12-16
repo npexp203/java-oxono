@@ -5,16 +5,25 @@ import model.*;
 
 import java.util.Scanner;
 
+/**
+ * Console controller for the game.
+ */
 public class ControllerConsole {
 
     private final GameModel gameModel;
     private final Scanner scanner;
 
+    /**
+     * Initializes the console controller.
+     */
     public ControllerConsole() {
         this.gameModel = new GameModel();
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Starts and manages the game loop.
+     */
     public void playGame() {
         CommandManager commandManager = new CommandManager();
         System.out.println("Welcome to Oxono!");
@@ -25,23 +34,17 @@ public class ControllerConsole {
             Player currentPlayer = gameModel.getCurrentPlayer();
             System.out.println("Current Player: " + currentPlayer.getColor());
 
-            // Si le joueur est automatisé, on exécute directement son move.
             if (currentPlayer.isAutomated()) {
                 gameModel.executeAutomaticMove();
-                // Puis on termine le tour
                 gameModel.endTurn();
             } else {
-                // Joueur humain
                 if (!handleTotemMovementOrForfeit(commandManager)) {
                     return;
                 }
 
                 displayBoard();
-
                 handleTokenPlacement(commandManager);
-
                 displayBoard();
-
                 handleEndTurnOptions(commandManager);
             }
         }
@@ -49,6 +52,13 @@ public class ControllerConsole {
         concludeGame();
     }
 
+    /**
+     * Handles the movement of a totem or the forfeit action.
+     * Allows the player to choose between moving a totem or forfeiting the game.
+     *
+     * @param commandManager The command manager to execute commands.
+     * @return true if the totem was moved, false if the game was forfeited.
+     */
     private boolean handleTotemMovementOrForfeit(CommandManager commandManager) {
         boolean totemMoved = false;
         while (!totemMoved && !gameModel.isGameOver()) {
@@ -81,6 +91,11 @@ public class ControllerConsole {
         return true;
     }
 
+    /**
+     * Handles the token placement process.
+     *
+     * @param commandManager The command manager to execute commands.
+     */
     private void handleTokenPlacement(CommandManager commandManager) {
         boolean tokenPlaced = false;
         while (!tokenPlaced && !gameModel.isGameOver()) {
@@ -98,6 +113,11 @@ public class ControllerConsole {
         }
     }
 
+    /**
+     * Handles options at the end of the player's turn.
+     *
+     * @param commandManager The command manager to execute commands.
+     */
     private void handleEndTurnOptions(CommandManager commandManager) {
         boolean endTurn = false;
         while (!endTurn && !gameModel.isGameOver()) {
@@ -128,7 +148,7 @@ public class ControllerConsole {
                     case 3 -> {
                         Command forfeitCommand = new ForfeitCommand(gameModel);
                         commandManager.executeCommand(forfeitCommand);
-                        return; // Game forfeited
+                        return;
                     }
                     default -> System.out.println("Invalid choice. Try again.");
                 }
@@ -138,6 +158,9 @@ public class ControllerConsole {
         }
     }
 
+    /**
+     * Concludes the game and announces the result.
+     */
     private void concludeGame() {
         System.out.println("Game over!");
         if (gameModel.checkWin()) {
@@ -147,6 +170,9 @@ public class ControllerConsole {
         }
     }
 
+    /**
+     * Displays the current state of the board.
+     */
     private void displayBoard() {
         Board board = gameModel.getBoard();
         for (int i = 0; i < 6; i++) {
@@ -154,8 +180,6 @@ public class ControllerConsole {
                 Piece piece = board.getPiece(new Position(i, j));
                 if (piece == null) {
                     System.out.print(". ");
-                } else if (piece instanceof Totem) {
-                    System.out.print(piece.getSymbol() + " ");
                 } else {
                     System.out.print(piece.getSymbol() + " ");
                 }
@@ -164,6 +188,12 @@ public class ControllerConsole {
         }
     }
 
+    /**
+     * Gets user input as an integer.
+     *
+     * @param prompt The prompt message to display.
+     * @return The integer input from the user.
+     */
     private int getUserInput(String prompt) {
         System.out.print(prompt);
         while (!scanner.hasNextInt()) {
@@ -173,6 +203,11 @@ public class ControllerConsole {
         return scanner.nextInt();
     }
 
+    /**
+     * Gets the symbol input from the user.
+     *
+     * @return The symbol chosen by the user.
+     */
     private Symbol getUserSymbol() {
         System.out.print("Enter the symbol (X or O): ");
         while (true) {
@@ -187,6 +222,12 @@ public class ControllerConsole {
         }
     }
 
+    /**
+     * Gets the position input from the user.
+     *
+     * @param prompt The prompt message to display.
+     * @return The position entered by the user.
+     */
     public Position getUserPosition(String prompt) {
         Scanner scannerLocal = new Scanner(System.in);
         int x, y;
