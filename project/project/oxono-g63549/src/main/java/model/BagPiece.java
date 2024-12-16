@@ -14,15 +14,7 @@ public class BagPiece {
         }
     }
 
-    public Piece removePieceFromBag(Symbol symbol) {
-        for (Piece p : bagPiece) {
-            if (p.getSymbol() == symbol) {
-                bagPiece.remove(p);
-                return p;
-            }
-        }
-        throw new IllegalStateException("No piece with symbol " + symbol + " available.");
-    }
+    
     // Dans BagPiece
     public int countSymbol(Symbol symbol) {
         int count = 0;
