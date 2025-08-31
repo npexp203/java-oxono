@@ -164,12 +164,28 @@ public class GameRules {
      */
     public static List<Position> getValidTokenPositionsForPosition(Board board, Position totemPos) {
         List<Position> validPositions = new ArrayList<>();
+
+        // Vérifier les positions adjacentes normales
         for (int[] dir : DIRECTIONS) {
-            Position adj = new Position(totemPos.x()+dir[0], totemPos.y()+dir[1]);
+            Position adj = new Position(totemPos.x() + dir[0], totemPos.y() + dir[1]);
             if (board.isValidCoordinate(adj) && board.isEmpty(adj)) {
                 validPositions.add(adj);
             }
         }
+
+        // Si aucune position adjacente valide ET que le totem est enclavé
+        if (validPositions.isEmpty() && isEnclaved(board, totemPos)) {
+            // Règle B : placer sur n'importe quelle case libre du plateau
+            for (int i = 0; i < 6; i++) {
+                for (int j = 0; j < 6; j++) {
+                    Position pos = new Position(i, j);
+                    if (board.isEmpty(pos)) {
+                        validPositions.add(pos);
+                    }
+                }
+            }
+        }
+
         return validPositions;
     }
 
@@ -180,9 +196,22 @@ public class GameRules {
         if (!board.isValidCoordinate(tokenPos) || !board.isEmpty(tokenPos)) {
             return false;
         }
+
+        // Vérifier adjacence normale
         int dx = Math.abs(totemPos.x() - tokenPos.x());
         int dy = Math.abs(totemPos.y() - tokenPos.y());
-        return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
+        boolean isAdjacent = (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
+
+        if (isAdjacent) {
+            return true;
+        }
+
+        // Si pas adjacent, vérifier si le totem est enclavé (règle B)
+        if (isEnclaved(board, totemPos)) {
+            return true; // Peut placer n'importe où
+        }
+
+        return false;
     }
     /**
      * Checks if a totem movement to a given position is valid.

@@ -25,6 +25,45 @@ public class BagPiece {
         }
         return count;
     }
+    /**
+     * Removes and returns a piece with the specified symbol.
+     * @param symbol the symbol of the piece to remove
+     * @return the removed piece, or null if no piece with that symbol exists
+     */
+    public Piece removePiece(Symbol symbol) {
+        for (int i = 0; i < bagPiece.size(); i++) {
+            Piece piece = bagPiece.get(i);
+            if (piece.getSymbol() == symbol) {
+                return bagPiece.remove(i);
+            }
+        }
+        return null; // ou throw exception
+    }
+
+    /**
+     * Checks if there are pieces with the specified symbol.
+     */
+    public boolean hasPiece(Symbol symbol) {
+        return countSymbol(symbol) > 0;
+    }
+
+    /**
+     * Returns the total number of pieces remaining.
+     */
+    public int size() {
+        return bagPiece.size();
+    }
+
+    /**
+     * Checks if the bag is empty.
+     */
+    public boolean isEmpty() {
+        return bagPiece.isEmpty();
+    }
+    // À ajouter dans BagPiece.java
+    public void addPiece(Piece piece) {
+        bagPiece.add(piece);
+    }
 
 
 }

@@ -15,7 +15,6 @@ public class GameController implements Observer {
     private Position selectedTotemPosition;
     private final CommandManager commandManager;
 
-
     /**
      * Constructs a new GameController with the given GameModel.
      * The GameController registers itself as an observer of the GameModel.
@@ -28,12 +27,13 @@ public class GameController implements Observer {
         this.model.addObserver(this);
     }
 
-    private void HandleBot() {
+    /**
+     * Handles the AI turn if the current player is automated.
+     */
+    private void handleBot() {
         if (model.getCurrentPlayer().isAutomated()) {
             System.out.println("Executing automatic move for AI.");
             model.executeAutomaticMove();
-            mainView.getBoardView().updateBoard(model);
-            model.endTurn();
         }
     }
 
@@ -45,8 +45,6 @@ public class GameController implements Observer {
      */
     public void setView(MainView mainView) {
         this.mainView = mainView;
-
-        // Mise à jour initiale des vues
         updateView();
     }
 
@@ -74,23 +72,23 @@ public class GameController implements Observer {
      */
     public void handleCellClick(int row, int col) {
         Position clickedPosition = new Position(row, col);
+
+        // Vérifier que c'est le tour du joueur humain
         if (model.getCurrentPlayer().getColor() == Color.PINK) {
             if (model.getCurrentPhase() == TurnPhase.MOVE_TOTEM) {
                 handleTotemMovement(clickedPosition);
             } else if (model.getCurrentPhase() == TurnPhase.PLACE_TOKEN) {
                 handleTokenPlacement(clickedPosition);
-                HandleBot();
-                model.advancePhase();
+                // Le bot joue après que le joueur humain ait terminé son tour
+                handleBot();
             }
         }
-
-
         updateView();
     }
 
     /**
      * Handles a click event on the board during the totem movement phase.
-     * If a totem belonging to the current player is clicked, it gets selected.
+     * If a totem is clicked, it gets selected.
      * If an empty cell is clicked while a totem is selected, attempts to move the totem.
      *
      * @param clickedPosition The position of the clicked cell.
@@ -99,88 +97,128 @@ public class GameController implements Observer {
         System.out.println("Clicked position: " + clickedPosition);
 
         Piece piece = model.getBoard().getPiece(clickedPosition);
-        System.out.println(piece);
-        System.out.println(model.getCurrentPlayer().getColor());
-        if (piece instanceof Totem) {
 
+        if (piece instanceof Totem) {
             System.out.println("Valid totem selected at: " + clickedPosition);
 
+            // Clear previous selection
+            if (selectedTotemPosition != null) {
+                mainView.getBoardView().highlightCell(selectedTotemPosition.x(), selectedTotemPosition.y(), false);
+            }
+
             // Highlight the selected totem
-            mainView.getBoardView();
             selectedTotemPosition = clickedPosition;
             mainView.getBoardView().highlightCell(clickedPosition.x(), clickedPosition.y(), true);
+
         } else if (selectedTotemPosition != null) {
-            System.out.println("Attempting to move to: " + clickedPosition);
+            System.out.println("Attempting to move totem to: " + clickedPosition);
 
             Symbol symbol = model.getBoard().getPiece(selectedTotemPosition).getSymbol();
-            boolean success = model.moveTotem(symbol, clickedPosition);
+            Position oldPosition = selectedTotemPosition;
 
-            if (success) {
+            // Utiliser le pattern Command au lieu d'appel direct
+            MoveTotemCommand command = new MoveTotemCommand(model, symbol, oldPosition, clickedPosition);
+            commandManager.executeCommand(command);
+
+            // Vérifier si la commande a réussi en consultant l'état du modèle
+            if (model.getCurrentPhase() == TurnPhase.PLACE_TOKEN) {
                 System.out.println("Totem moved successfully to: " + clickedPosition);
-                mainView.getBoardView();
+
+                // Clear selection and highlighting
+                mainView.getBoardView().highlightCell(selectedTotemPosition.x(), selectedTotemPosition.y(), false);
                 selectedTotemPosition = null;
-                model.advancePhase();
+
                 System.out.println("Current phase: " + model.getCurrentPhase());
             } else {
                 System.out.println("Invalid move. Try another position.");
             }
         } else {
-            System.out.println("No valid totem selected.");
+            System.out.println("No totem selected. Please select a totem first.");
         }
     }
 
-
     /**
      * Handles a click event on the board during the token placement phase.
-     * A dialog box is displayed to select a token symbol, and the chosen symbol is placed on the board at the clicked position.
+     * Places a token with the symbol of the last moved totem at the clicked position.
      *
      * @param clickedPosition The position of the clicked cell on the board.
+     */
+    /**
+     * Handles a click event on the board during the token placement phase.
+     * Places a token with the symbol of the last moved totem at the clicked position using Command pattern.
      */
     private void handleTokenPlacement(Position clickedPosition) {
         System.out.println("Clicked position for token: " + clickedPosition);
 
-        int remainingX = model.getRemainingTokens(Symbol.X);
-        int remainingO = model.getRemainingTokens(Symbol.O);
+        // Utiliser le symbole du totem qui vient d'être déplacé
+        Symbol symbolToPlace = model.getLastMovedSymbol();
+        if (symbolToPlace == null) {
+            System.out.println("Error: No totem was moved in this turn.");
+            return;
+        }
 
-        System.out.println("Remaining tokens - X: " + remainingX + ", O: " + remainingO);
+        int remainingTokens = model.getRemainingTokens(symbolToPlace);
+        System.out.println("Remaining " + symbolToPlace + " tokens: " + remainingTokens);
 
-        boolean success = model.placeToken(clickedPosition, model.getLastMovedSymbol());
-        if (success) {
-            System.out.println("Token placed successfully at: " + clickedPosition);
+        if (remainingTokens <= 0) {
+            System.out.println("No more " + symbolToPlace + " tokens available.");
+            return;
+        }
 
+        // Utiliser le pattern Command au lieu d'appel direct
+        PlaceTokenCommand command = new PlaceTokenCommand(model, clickedPosition, symbolToPlace);
+        commandManager.executeCommand(command);
+
+        // Vérifier si la commande a réussi en consultant l'état du modèle
+        // Si le jeu n'est pas terminé et qu'on est passé au joueur suivant, c'est que ça a marché
+        if (model.getCurrentPhase() == TurnPhase.MOVE_TOTEM || model.isGameOver()) {
+            System.out.println("Token " + symbolToPlace + " placed successfully at: " + clickedPosition);
         } else {
-            System.out.println("Invalid token placement.");
+            System.out.println("Invalid token placement. Position must be adjacent to the moved totem.");
         }
     }
 
-
+    /**
+     * Undoes the last command.
+     */
     public void undo() {
         commandManager.undo();
-        updateView();
-    }
 
+        // Réinitialiser la sélection après un undo
+        if (selectedTotemPosition != null) {
+            mainView.getBoardView().highlightCell(selectedTotemPosition.x(), selectedTotemPosition.y(), false);
+            selectedTotemPosition = null;
+        }
+
+        updateView();
+        System.out.println("Undo executed. Current phase: " + model.getCurrentPhase());
+    }
+    /**
+     * Redoes the last undone command.
+     */
     public void redo() {
         commandManager.redo();
         updateView();
+        System.out.println("Redo executed. Current phase: " + model.getCurrentPhase());
     }
 
+    /**
+     * Updates all views with the current game state.
+     */
     private void updateView() {
-        Player previousPlayer = model.getCurrentPlayer();
-
         if (mainView != null && mainView.getBoardView() != null) {
             mainView.getBoardView().updateBoard(model);
         }
 
         Player currentPlayer = model.getCurrentPlayer();
-        if (!previousPlayer.equals(currentPlayer)) {
-            model.notifyObservers("CurrentPlayerChanged", currentPlayer);
-        }
-
         int remainingX = currentPlayer.getBag().countSymbol(Symbol.X);
         int remainingO = currentPlayer.getBag().countSymbol(Symbol.O);
         model.notifyObservers("TokenCountChanged", "X: " + remainingX + ", O: " + remainingO);
-    }
 
+        // AJOUTER CES NOTIFICATIONS :
+        model.notifyObservers("CurrentPlayerChanged", currentPlayer);
+        model.notifyObservers("PhaseChanged", model.getCurrentPhase());
+    }
 
     @Override
     public void update(String event, Object value) {
@@ -193,11 +231,13 @@ public class GameController implements Observer {
         }
     }
 
-
     public GameModel getModel() {
         return model;
     }
 
+    /**
+     * Forfeits the current game.
+     */
     public void forfeitGame() {
         model.forfeitGame();
         updateView();

@@ -23,6 +23,8 @@ public class GameModel implements Observable {
     private List<Observer> observers = new ArrayList<>();
     private Symbol LastMovedSymbol = null;
     private TurnPhase currentPhase = TurnPhase.MOVE_TOTEM;
+    private Player winner = null;
+
 
 
     public GameModel() {
@@ -34,8 +36,8 @@ public class GameModel implements Observable {
         this.board = new Board();
         this.gameOver = false;
 
-        board.putPiece(new Position(0, 0), totemX);
-        board.putPiece(new Position(5, 5), totemO);
+        board.putPiece(new Position(2, 2), totemX);
+        board.putPiece(new Position(3, 3), totemO);
     }
 
     /**
@@ -45,6 +47,8 @@ public class GameModel implements Observable {
      */
     public void startGame() {
         gameOver = false;
+        winner = null; // Remettre le gagnant à null
+
         board.reset();
 
         totemX = new Totem(Symbol.X);
@@ -56,8 +60,13 @@ public class GameModel implements Observable {
         player2 = new Player(Color.BLACK, new RandomMoveStrategy());
 
         currentPlayer = player1;
+        currentPhase = TurnPhase.MOVE_TOTEM; // S'assurer que la phase est correcte
+
 
         System.out.println("Game started!");
+        notifyObservers("CurrentPlayerChanged", currentPlayer);
+        notifyObservers("PhaseChanged", currentPhase);
+        notifyObservers("GameStarted", null);
     }
 
     public int getRemainingTokens(Symbol symbol) {
@@ -95,10 +104,11 @@ public class GameModel implements Observable {
 
         boolean moved = GameRules.moveTotem(board, (symbol == Symbol.X ? totemX : totemO), target);
         if (moved) {
-            checkGameOver();
+            System.out.println("on rentre la?");
+            currentPhase = TurnPhase.PLACE_TOKEN; // Avancer à la phase suivante
             LastMovedSymbol = symbol;
             notifyObservers("TotemMoved", target);
-
+            checkGameOver();
         }
         return moved;
     }
@@ -115,11 +125,13 @@ public class GameModel implements Observable {
      */
     public boolean placeToken(Position position, Symbol symbol) {
         if (gameOver || currentPhase != TurnPhase.PLACE_TOKEN) {
-            System.out.println("GAME OVER");
             return false;
-
         }
 
+        // Vérifier que le joueur a encore des pièces de ce symbole
+        if (currentPlayer.getBag().countSymbol(symbol) <= 0) {
+            return false;
+        }
 
         Totem totem = (symbol == Symbol.X) ? totemX : totemO;
         Position totemPos = board.findTotemPosition(totem);
@@ -128,24 +140,24 @@ public class GameModel implements Observable {
             return false;
         }
 
-        board.putPiece(position, new Token(currentPlayer.getColor(), symbol));
-
-        int previousRemainingX = currentPlayer.getBag().countSymbol(Symbol.X);
-        int previousRemainingO = currentPlayer.getBag().countSymbol(Symbol.O);
-
-        notifyObservers("TokenPlaced", position);
-
-        int remainingX = currentPlayer.getBag().countSymbol(Symbol.X);
-        int remainingO = currentPlayer.getBag().countSymbol(Symbol.O);
-
-        if (remainingX != previousRemainingX || remainingO != previousRemainingO) {
-            notifyObservers("TokenCountChanged", "X: " + remainingX + ", O: " + remainingO);
+        // Retirer la pièce du sac du joueur
+        Piece removedPiece = currentPlayer.getBag().removePiece(symbol);
+        if (removedPiece == null) {
+            return false;
         }
 
-        endTurn();
-        checkGameOver();
-        System.out.println(gameOver + "CACACACACACAC");
+        board.putPiece(position, removedPiece);
+        notifyObservers("TokenPlaced", position);
+
+        // Notifier le changement de count
+        int remainingX = currentPlayer.getBag().countSymbol(Symbol.X);
+        int remainingO = currentPlayer.getBag().countSymbol(Symbol.O);
         notifyObservers("TokenCountChanged", "X: " + remainingX + ", O: " + remainingO);
+
+        checkGameOver();
+        if (!gameOver) {
+            endTurn();
+        }
 
         return true;
     }
@@ -157,21 +169,27 @@ public class GameModel implements Observable {
      */
     public void endTurn() {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
+        currentPhase = TurnPhase.MOVE_TOTEM; // Remettre la phase pour le nouveau joueur
         System.out.println("Next turn: " + currentPlayer.getColor());
-        notifyObservers("Next turn :", currentPlayer.getColor());
+        notifyObservers("CurrentPlayerChanged", currentPlayer);
+        notifyObservers("PhaseChanged", currentPhase);
     }
 
     /**
      * Checks for the game over conditions and sets gameOver to true if necessary.
      */
     private void checkGameOver() {
+        System.out.println("DEBUG: Checking game over, current phase: " + currentPhase);
         if (checkWin()) {
+            winner = currentPlayer; // Stocker avant endTurn()
             gameOver = true;
             System.out.println("Game over! The winner is: " + getWinner().getColor());
         } else if (!isMovePossible()) {
             gameOver = true;
             System.out.println("Game over! It's a draw, no moves left.");
         } else {
+            System.out.println("DEBUG: Game continues, phase should stay: " + currentPhase);
+
             gameOver = false;
         }
     }
@@ -188,9 +206,16 @@ public class GameModel implements Observable {
                 }
 
                 Piece piece = board.getPiece(pos);
+                // Les totems ne comptent pas dans les alignements
+                if (piece instanceof Totem) {
+                    continue;
+                }
 
-                if (checkDirection(pos, 1, 0, piece) ||
-                        checkDirection(pos, 0, 1, piece)) {
+                // Vérifier alignements horizontal et vertical
+                if (checkColorAlignment(pos, 1, 0) ||
+                        checkColorAlignment(pos, 0, 1) ||
+                        checkSymbolAlignment(pos, 1, 0) ||
+                        checkSymbolAlignment(pos, 0, 1)) {
                     return true;
                 }
             }
@@ -198,22 +223,74 @@ public class GameModel implements Observable {
         return false;
     }
 
-    private boolean checkDirection(Position start, int dx, int dy, Piece piece) {
-        int count = 0;
+    private boolean checkColorAlignment(Position start, int dx, int dy) {
+        Piece startPiece = board.getPiece(start);
+        if (startPiece instanceof Totem) {
+            return false;
+        }
+
+        Color targetColor = startPiece.getColor();
+        System.out.println("Checking color alignment from " + start + " direction (" + dx + "," + dy + ") for color " + targetColor);
 
         for (int step = 0; step < 4; step++) {
             int x = start.x() + step * dx;
             int y = start.y() + step * dy;
             Position pos = new Position(x, y);
 
-            if (!board.isValidCoordinate(pos) || !piece.equals(board.getPiece(pos))) {
+            if (!board.isValidCoordinate(pos)) {
+                System.out.println("  Step " + step + ": Invalid coordinate " + pos);
                 return false;
             }
 
-            count++;
+            Piece piece = board.getPiece(pos);
+            System.out.println("  Step " + step + ": Position " + pos + " has piece: " + piece);
+
+            if (piece == null) {
+                System.out.println("  Step " + step + ": No piece at " + pos);
+                return false;
+            }
+
+            if (piece instanceof Totem) {
+                System.out.println("  Step " + step + ": Totem found at " + pos + ", breaking alignment");
+                return false;
+            }
+
+            if (piece.getColor() != targetColor) {
+                System.out.println("  Step " + step + ": Wrong color at " + pos + " (expected " + targetColor + ", got " + piece.getColor() + ")");
+                return false;
+            }
+
+            System.out.println("  Step " + step + ": Match found at " + pos + " with color " + piece.getColor());
         }
 
-        return count == 4;
+        System.out.println("COLOR ALIGNMENT FOUND: 4 pieces of " + targetColor + " from " + start + " in direction (" + dx + "," + dy + ")");
+        return true;
+    }
+
+    private boolean checkSymbolAlignment(Position start, int dx, int dy) {
+        Piece startPiece = board.getPiece(start);
+        if (startPiece instanceof Totem) {
+            return false;
+        }
+
+        Symbol targetSymbol = startPiece.getSymbol();
+
+        for (int step = 0; step < 4; step++) {
+            int x = start.x() + step * dx;
+            int y = start.y() + step * dy;
+            Position pos = new Position(x, y);
+
+            if (!board.isValidCoordinate(pos)) {
+                return false;
+            }
+
+            Piece piece = board.getPiece(pos);
+            if (piece == null || piece instanceof Totem || piece.getSymbol() != targetSymbol) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -221,10 +298,7 @@ public class GameModel implements Observable {
      * Retourne le joueur gagnant s’il y en a un.
      */
     public Player getWinner() {
-        if (checkWin()) {
-            return currentPlayer;
-        }
-        return null;
+        return winner;
     }
 
     /**
@@ -268,31 +342,24 @@ public class GameModel implements Observable {
         Position totemTarget = move.getTotemTarget();
         Position tokenTarget = move.getTokenTarget();
 
-        System.out.println(getCurrentPhase() + "CACACACACAACACACA");
-        advancePhase();
-        System.out.println(getCurrentPhase() + "CACACACACAACACACA");
+        // Supprimer le advancePhase() d'ici
         boolean totemMoved = moveTotem(symbol, totemTarget);
-        notifyObservers("ToTemMoved", tokenTarget);
+        notifyObservers("TotemMoved", totemTarget);
 
         if (totemMoved) {
             System.out.println("Automatic player moved the " + symbol + " totem from " + currentTotemPos + " to " + totemTarget);
-            advancePhase();
+            // Le advancePhase() se fait déjà dans moveTotem()
         } else {
             System.out.println("Automatic player attempted to move the totem, but failed.");
+            return; // Arrêter si le totem n'a pas bougé
         }
-
 
         if (tokenTarget != null) {
             boolean tokenPlaced = placeToken(tokenTarget, symbol);
-            System.out.println(tokenPlaced);
             notifyObservers("TokenPlaced", tokenTarget);
 
             if (tokenPlaced) {
                 System.out.println("Automatic player placed a " + symbol + " token at " + tokenTarget);
-                endTurn();
-                notifyObservers("TokenPlaced", tokenTarget);
-
-
             } else {
                 System.out.println("Automatic player attempted to place a token, but failed.");
             }
@@ -316,7 +383,7 @@ public class GameModel implements Observable {
             throw new IllegalStateException("The game is already over.");
         }
 
-        Player winner = (currentPlayer == player1) ? player2 : player1;
+        this.winner = (currentPlayer == player1) ? player2 : player1;
         gameOver = true;
         System.out.println("Player " + winner.getColor() + " wins because the opponent forfeited!");
     }
@@ -375,6 +442,46 @@ public class GameModel implements Observable {
     public Player getPlayer2() {
         return player2;
     }
+    // Dans GameModel.java
+    public void restoreTokenToCurrentPlayer(Piece piece) {
+        if (piece.getColor() == Color.PINK) {
+            player1.getBag().addPiece(piece);
+        } else {
+            player2.getBag().addPiece(piece);
+        }
+    }
+
+    public void restoreTokenToPlayer(Piece piece, Color playerColor) {
+        if (playerColor == Color.PINK) {
+            player1.getBag().addPiece(piece);
+        } else {
+            player2.getBag().addPiece(piece);
+        }
+    }
+
+    // Pour l'état du jeu
+    public void restoreGameState(Player currentPlayer, TurnPhase phase) {
+        this.currentPlayer = currentPlayer;
+        this.currentPhase = phase;
+        notifyObservers("CurrentPlayerChanged", currentPlayer);
+        notifyObservers("PhaseChanged", phase);
+    }
+    // Dans GameModel
+    public boolean canSelectTotem(Position position) {
+        if (currentPhase != TurnPhase.MOVE_TOTEM) return false;
+        Piece piece = board.getPiece(position);
+        return piece instanceof Totem;
+    }
+
+//    public SelectionResult selectTotem(Position position) {
+//        // Validation + logique + notifications
+//        if (!canSelectTotem(position)) {
+//            return SelectionResult.INVALID;
+//        }
+//        // ... logique
+//        notifyObservers("TotemSelected", position);
+//        return SelectionResult.SUCCESS;
+//    }
 
 
 }

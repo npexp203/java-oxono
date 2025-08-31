@@ -1,51 +1,48 @@
+// ===== MainView.java =====
 package View;
 
 import Controller.GameController;
 import javafx.scene.layout.BorderPane;
+import javafx.geometry.Insets;
 
 /**
- * MainView is the primary view that integrates MenuView, BoardView, and InfoView.
- * It extends BorderPane to arrange the components in a structured manner.
+ * Modern MainView with improved layout and styling.
  */
 public class MainView extends BorderPane {
-
     private MenuView menuView;
     private BoardView boardView;
     private InfoView infoView;
 
-    /**
-     * Constructs the MainView with the given GameController.
-     * Initializes MenuView, BoardView, and InfoView and sets their positions.
-     * 
-     * @param controller The GameController used to manage the game state.
-     */
     public MainView(GameController controller) {
         this.menuView = new MenuView(controller);
         this.boardView = new BoardView(controller);
         this.infoView = new InfoView(controller);
 
+        setupLayout();
+        setupObservers(controller);
+    }
+
+    private void setupLayout() {
+        setStyle("-fx-background-color: linear-gradient(to bottom, #edf2f7, #e2e8f0);");
+
+        BorderPane.setMargin(menuView, new Insets(10));
+        BorderPane.setMargin(boardView, new Insets(0, 10, 10, 10));
+        BorderPane.setMargin(infoView, new Insets(0, 10, 10, 0));
+
         setTop(menuView);
         setCenter(boardView);
         setRight(infoView);
+    }
 
+    private void setupObservers(GameController controller) {
         controller.getModel().addObserver(boardView);
         controller.getModel().addObserver(infoView);
     }
 
-    /**
-     * Returns the BoardView component.
-     * 
-     * @return The BoardView used in the MainView.
-     */
     public BoardView getBoardView() {
         return boardView;
     }
 
-    /**
-     * Returns the InfoView component.
-     * 
-     * @return The InfoView used in the MainView.
-     */
     public InfoView getInfoView() {
         return infoView;
     }

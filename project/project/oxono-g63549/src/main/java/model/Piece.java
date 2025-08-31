@@ -7,7 +7,7 @@ public abstract class Piece {
 
 
     public Piece(Color color, Symbol symbol){
-        if(color == null && symbol == null){
+        if(color == null || symbol == null){
             throw new IllegalArgumentException("Color and Symbol can not be null");
         }
         this.color = color;
