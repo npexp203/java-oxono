@@ -57,7 +57,7 @@ public class MenuView extends HBox {
         aiLevelCombo.setStyle(getInputStyle());
 
         startButton = createStyledButton(" Nouvelle Partie", "#48bb78");
-        forfeitButton = createStyledButton("️ Abandonner", "#e53e3e");
+        forfeitButton = createStyledButton("️Abandonner", "#e53e3e");
         undoButton = createStyledButton(" Annuler", "#4299e1");
         redoButton = createStyledButton(" Refaire", "#4299e1");
     }
