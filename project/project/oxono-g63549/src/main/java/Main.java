@@ -23,17 +23,13 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        // Vérifier si l'utilisateur veut lancer la version console
         if (args.length > 0 && args[0].equalsIgnoreCase("console")) {
-            System.out.println("=== OXONO - VERSION CONSOLE ===");
-            System.out.println("Démarrage du jeu...\n");
-            
+
             ControllerConsole consoleController = new ControllerConsole();
             consoleController.playGame();
             
             System.out.println("\nMerci d'avoir joué à Oxono !");
         } else {
-            // Version JavaFX par défaut
             Application.launch(Main.class, args);
         }
     }
