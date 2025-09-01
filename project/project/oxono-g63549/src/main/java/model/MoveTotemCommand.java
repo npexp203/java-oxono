@@ -10,6 +10,9 @@ public class MoveTotemCommand implements Command {
     private final Symbol totemSymbol;
     private final Position oldPosition;
     private final Position newPosition;
+    private final Player originalPlayer;
+    private final TurnPhase originalPhase;
+    private final Symbol originalLastMovedSymbol;
 
     /**
      * Creates a new MoveTotemCommand.
@@ -23,6 +26,10 @@ public class MoveTotemCommand implements Command {
         this.totemSymbol = totemSymbol;
         this.oldPosition = oldPosition;
         this.newPosition = newPosition;
+
+        this.originalPlayer = gameModel.getCurrentPlayer();
+        this.originalPhase = gameModel.getCurrentPhase();
+        this.originalLastMovedSymbol = gameModel.getLastMovedSymbol();
     }
 
     @Override
@@ -32,7 +39,14 @@ public class MoveTotemCommand implements Command {
 
     @Override
     public void unexecute() {
-        gameModel.moveTotem(totemSymbol, oldPosition);
+        Totem totem = (totemSymbol == Symbol.X) ? gameModel.getTotemX() : gameModel.getTotemO();
+        gameModel.getBoard().removePiece(newPosition);
+        gameModel.getBoard().putPiece(oldPosition, totem);
+
+        gameModel.restoreGameState(originalPlayer, originalPhase);
+        gameModel.setLastMovedSymbol(originalLastMovedSymbol);
+
+        System.out.println("Totem movement undone: " + totemSymbol + " from " + newPosition + " back to " + oldPosition);
     }
 
     @Override

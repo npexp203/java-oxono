@@ -1,21 +1,21 @@
 package model;
 
 public abstract class Piece {
-    private final Color color;
+    private final Colors colors;
     private final Symbol symbol;
 
 
 
-    public Piece(Color color, Symbol symbol){
-        if(color == null || symbol == null){
+    public Piece(Colors colors, Symbol symbol){
+        if(colors == null || symbol == null){
             throw new IllegalArgumentException("Color and Symbol can not be null");
         }
-        this.color = color;
+        this.colors = colors;
         this.symbol = symbol;
     }
 
-    public Color getColor() {
-        return color;
+    public Colors getColor() {
+        return colors;
     }
 
     public  Symbol getSymbol() {
@@ -25,7 +25,7 @@ public abstract class Piece {
     @Override
     public String toString() {
         return "Piece{" +
-                "color=" + color +
+                "color=" + colors +
                 ", symbol=" + symbol +
                 '}';
     }

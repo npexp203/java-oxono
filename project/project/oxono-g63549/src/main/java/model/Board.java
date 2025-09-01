@@ -2,15 +2,23 @@ package model;
 
 import java.util.List;
 
-/**
- * Represents the game board.
- * It contains the positions of all pieces and provides methods to manipulate them.
- */
+
 public class Board {
-    private final int size = 6;
-    private Piece[][] board = new Piece[size][size];
+    private int size;
+    private Piece[][] board;
 
     public Board() {
+        this(6);
+    }
+    public Board(int size) {
+        if (size < 4 || size > 10) {
+            throw new IllegalArgumentException("Board size must be between 4 and 10");
+        }
+        this.size = size;
+        this.board = new Piece[size][size];
+    }
+    public int getSize() {
+        return size;
     }
 
     /**
@@ -72,16 +80,7 @@ public class Board {
         return board[pos.x()][pos.y()] == null;
     }
 
-    /**
-     * Resets the board to its initial state.
-     */
-    public void reset() {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                board[i][j] = null;
-            }
-        }
-    }
+
 
     /**
      * Finds the position of the given totem.
@@ -117,4 +116,5 @@ public class Board {
             throw new IllegalArgumentException("Invalid coordinate: " + pos);
         }
     }
+
 }

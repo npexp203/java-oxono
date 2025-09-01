@@ -6,7 +6,7 @@ public class Totem extends Piece {
 
 
     public Totem(Symbol symbol) {
-        super(Color.BLUE, symbol);
+        super(Colors.BLUE, symbol);
     }
 
 

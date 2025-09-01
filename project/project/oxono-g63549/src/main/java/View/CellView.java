@@ -8,27 +8,51 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.InnerShadow;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import model.*;
 
-/**
- * A modern CellView with smooth animations and attractive styling.
- */
-public class CellView extends StackPane {
+
+public class CellView extends StackPane{
     private final int row;
     private final int col;
     private final GameController controller;
+    private final GameModel model;
     private Rectangle rectangle;
     private Text label;
     private boolean isSelected;
-    private static final double CELL_SIZE = 60;
+    private boolean isHovering;
+    private Timeline pulseAnimation;
+    private static final double CELL_SIZE = 70;
+
+    private static final String BASE_STYLE =
+            "-fx-background-color: linear-gradient(to bottom, #f8fafc, #f1f5f9);" +
+                    "-fx-border-color: #cbd5e1;" +
+                    "-fx-border-width: 1.5;" +
+                    "-fx-border-radius: 12;" +
+                    "-fx-background-radius: 12;";
+
+    private static final String VALID_HOVER_STYLE =
+            "-fx-background-color: linear-gradient(to bottom, #86efac, #4ade80);" +
+                    "-fx-border-color: #16a34a;" +
+                    "-fx-border-width: 3;" +
+                    "-fx-border-radius: 12;" +
+                    "-fx-background-radius: 12;";
+
+    private static final String SELECTED_TOTEM_STYLE =
+            "-fx-background-color: linear-gradient(to bottom, #fbbf24, #f59e0b);" +
+                    "-fx-border-color: #d97706;" +
+                    "-fx-border-width: 4;" +
+                    "-fx-border-radius: 12;" +
+                    "-fx-background-radius: 12;";
 
     public CellView(int row, int col, GameController controller) {
         this.row = row;
         this.col = col;
         this.controller = controller;
+        this.model = controller.getModel();
         this.isSelected = false;
+        this.isHovering = false;
 
         setupCell();
         setupEventHandling();
@@ -38,20 +62,21 @@ public class CellView extends StackPane {
         rectangle = new Rectangle(CELL_SIZE, CELL_SIZE);
         rectangle.setArcWidth(12);
         rectangle.setArcHeight(12);
-        rectangle.setFill(javafx.scene.paint.Color.WHITE);
-        rectangle.setStroke(javafx.scene.paint.Color.valueOf("#e2e8f0"));
+        rectangle.setFill(Color.WHITE);
+        rectangle.setStroke(Color.valueOf("#e2e8f0"));
         rectangle.setStrokeWidth(1.5);
 
         DropShadow cellShadow = new DropShadow();
-        cellShadow.setRadius(3);
-        cellShadow.setOffsetY(2);
-        cellShadow.setColor(javafx.scene.paint.Color.valueOf("#00000015"));
+        cellShadow.setRadius(4);
+        cellShadow.setOffsetY(3);
+        cellShadow.setColor(Color.valueOf("#00000025"));
         rectangle.setEffect(cellShadow);
 
         label = new Text("");
-        label.setFont(Font.font("System", FontWeight.BOLD, 24));
-        label.setFill(javafx.scene.paint.Color.valueOf("#2d3748"));
+        label.setFont(Font.font("Segoe UI", FontWeight.BOLD, 24));
+        label.setFill(Color.valueOf("#2d3748"));
 
+        setStyle(BASE_STYLE);
         getChildren().addAll(rectangle, label);
     }
 
@@ -61,130 +86,184 @@ public class CellView extends StackPane {
             controller.handleCellClick(row, col);
         });
 
-        setOnMouseEntered(event -> playHoverAnimation(true));
-        setOnMouseExited(event -> playHoverAnimation(false));
+        setOnMouseEntered(event -> {
+            isHovering = true;
+            updateHoverEffects();
+        });
+
+        setOnMouseExited(event -> {
+            isHovering = false;
+            resetStyle();
+        });
     }
 
     private void playClickAnimation() {
-        ScaleTransition scale = new ScaleTransition(Duration.millis(100), this);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(120), this);
         scale.setFromX(1.0);
         scale.setFromY(1.0);
-        scale.setToX(0.95);
-        scale.setToY(0.95);
+        scale.setToX(0.93);
+        scale.setToY(0.93);
         scale.setAutoReverse(true);
         scale.setCycleCount(2);
         scale.play();
     }
 
-    private void playHoverAnimation(boolean entering) {
-        TranslateTransition translate = new TranslateTransition(Duration.millis(150), this);
-        if (entering) {
-            translate.setToY(-2);
-            rectangle.setFill(javafx.scene.paint.Color.valueOf("#f7fafc"));
-        } else {
-            translate.setToY(0);
-            updateCellColor();
+
+    private void updateHoverEffects() {
+        Position currentPos = new Position(row, col);
+
+        if (model.shouldShowHoverEffect(currentPos)) {
+            if (model.isValidMoveTarget(currentPos)) {
+                setStyle(VALID_HOVER_STYLE);
+                playScaleAnimation(1.05);
+
+                DropShadow greenGlow = new DropShadow();
+                greenGlow.setColor(Color.valueOf("#10b98180"));
+                greenGlow.setRadius(8);
+                greenGlow.setOffsetY(3);
+                setEffect(greenGlow);
+            }
         }
-        translate.play();
     }
 
-    public void updateCell(GameModel model) {
-        Board board = model.getBoard();
+    private void playScaleAnimation(double targetScale) {
+        ScaleTransition scale = new ScaleTransition(Duration.millis(200), this);
+        scale.setToX(targetScale);
+        scale.setToY(targetScale);
+        scale.play();
+    }
+
+
+    private void updateDisplay() {
         Position position = new Position(row, col);
-        Piece piece = board.getPiece(position);
+        Piece piece = model.getPieceAt(position);
 
         updateCellAppearance(piece);
         updateSelectionState();
+
+    }
+
+
+    public void updateCell(GameModel model) {
+        updateDisplay();
     }
 
     private void updateCellAppearance(Piece piece) {
-        if (piece == null) {
-            rectangle.setFill(javafx.scene.paint.Color.WHITE);
-            label.setText("");
-        } else if (piece instanceof Totem) {
-            rectangle.setFill(javafx.scene.paint.Color.valueOf("#63b3ed"));
-            label.setText(piece.getSymbol().toString());
-            label.setFill(javafx.scene.paint.Color.WHITE);
+        switch (piece) {
+            case null -> {
+                rectangle.setFill(Color.WHITE);
+                label.setText("");
+                label.setEffect(null);
+            }
+            case Totem totem -> {
 
-            DropShadow glowEffect = new DropShadow();
-            glowEffect.setColor(javafx.scene.paint.Color.valueOf("#3182ce"));
-            glowEffect.setRadius(8);
-            label.setEffect(glowEffect);
-        } else if (piece instanceof Token token) {
-            updateTokenAppearance(token);
+                rectangle.setFill(Color.valueOf("#3b82f6"));
+                label.setText(piece.getSymbol().toString());
+                label.setFill(Color.WHITE);
+                label.setFont(Font.font("Segoe UI", FontWeight.BOLD, 28));
+
+                DropShadow blueGlow = new DropShadow();
+                blueGlow.setColor(Color.valueOf("#3b82f680"));
+                blueGlow.setRadius(10);
+                blueGlow.setOffsetY(2);
+                label.setEffect(blueGlow);
+            }
+            case Token token -> updateTokenAppearance(token);
+            default -> {
+            }
         }
     }
 
     private void updateTokenAppearance(Token token) {
-        if (token.getColor() == Color.PINK) {
-            rectangle.setFill(javafx.scene.paint.Color.valueOf("#f687b3"));
-            label.setFill(javafx.scene.paint.Color.valueOf("#97266d"));
-        } else if (token.getColor() == Color.BLACK) {
-            rectangle.setFill(javafx.scene.paint.Color.valueOf("#4a5568"));
-            label.setFill(javafx.scene.paint.Color.WHITE);
-        }
-
         label.setText(token.getSymbol().toString());
+        label.setFont(Font.font("Segoe UI", FontWeight.BOLD, 22));
 
-        InnerShadow innerShadow = new InnerShadow();
-        innerShadow.setRadius(3);
-        innerShadow.setColor(javafx.scene.paint.Color.valueOf("#00000030"));
-        rectangle.setEffect(innerShadow);
-    }
+        if (token.getColor() == Colors.PINK) {
+            rectangle.setFill(Color.valueOf("#f472b6"));
+            label.setFill(Color.valueOf("#be185d"));
 
-    private void updateCellColor() {
-        Board board = controller.getModel().getBoard();
-        Position position = new Position(row, col);
-        Piece piece = board.getPiece(position);
-        updateCellAppearance(piece);
+            DropShadow pinkGlow = new DropShadow();
+            pinkGlow.setColor(Color.valueOf("#ec489960"));
+            pinkGlow.setRadius(6);
+            pinkGlow.setOffsetY(2);
+            label.setEffect(pinkGlow);
+
+        } else {
+            rectangle.setFill(Color.valueOf("#4b5563"));
+            label.setFill(Color.WHITE);
+
+            DropShadow darkGlow = new DropShadow();
+            darkGlow.setColor(Color.valueOf("#37415160"));
+            darkGlow.setRadius(6);
+            darkGlow.setOffsetY(2);
+            label.setEffect(darkGlow);
+        }
     }
 
     private void updateSelectionState() {
-        if (isSelected) {
-            rectangle.setStroke(javafx.scene.paint.Color.valueOf("#f6e05e"));
-            rectangle.setStrokeWidth(3);
+        Position position = new Position(row, col);
 
-            DropShadow selectionGlow = new DropShadow();
-            selectionGlow.setColor(javafx.scene.paint.Color.valueOf("#f6e05e"));
-            selectionGlow.setRadius(8);
-            rectangle.setEffect(selectionGlow);
-        } else {
-            rectangle.setStroke(javafx.scene.paint.Color.valueOf("#e2e8f0"));
-            rectangle.setStrokeWidth(1.5);
-            updateCellColor();
-        }
-    }
+        if (model.isPositionSelected(position)) {
+            Piece piece = model.getPieceAt(position);
 
-    public void setSelected(boolean selected) {
-        this.isSelected = selected;
-        updateSelectionState();
+            if (piece instanceof Totem) {
+                setStyle(SELECTED_TOTEM_STYLE);
 
-        if (selected) {
-            playPulseAnimation();
+                DropShadow goldGlow = new DropShadow();
+                goldGlow.setColor(Color.valueOf("#f59e0b80"));
+                goldGlow.setRadius(12);
+                goldGlow.setOffsetY(3);
+                setEffect(goldGlow);
+
+                playPulseAnimation();
+            }
+        } else if (!isHovering) {
+            resetStyle();
         }
     }
 
     private void playPulseAnimation() {
-        Timeline pulse = new Timeline(
+        if (pulseAnimation != null) {
+            pulseAnimation.stop();
+        }
+        
+        pulseAnimation = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(scaleXProperty(), 1.0),
                         new KeyValue(scaleYProperty(), 1.0)),
-                new KeyFrame(Duration.millis(300),
-                        new KeyValue(scaleXProperty(), 1.05),
-                        new KeyValue(scaleYProperty(), 1.05)),
-                new KeyFrame(Duration.millis(600),
+                new KeyFrame(Duration.millis(400),
+                        new KeyValue(scaleXProperty(), 1.08),
+                        new KeyValue(scaleYProperty(), 1.08)),
+                new KeyFrame(Duration.millis(800),
                         new KeyValue(scaleXProperty(), 1.0),
                         new KeyValue(scaleYProperty(), 1.0))
         );
-        pulse.setCycleCount(1);
-        pulse.play();
+        pulseAnimation.setCycleCount(Timeline.INDEFINITE);
+        pulseAnimation.play();
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    public void resetStyle() {
+        if (!isHovering) {
+            setStyle(BASE_STYLE);
+            playScaleAnimation(1.0);
+
+            if (pulseAnimation != null) {
+                pulseAnimation.stop();
+                pulseAnimation = null;
+            }
+
+            DropShadow cellShadow = new DropShadow();
+            cellShadow.setRadius(4);
+            cellShadow.setOffsetY(3);
+            cellShadow.setColor(Color.valueOf("#00000025"));
+            setEffect(cellShadow);
+        }
     }
+
 
     public Position getPosition() {
         return new Position(row, col);
     }
+
+
 }

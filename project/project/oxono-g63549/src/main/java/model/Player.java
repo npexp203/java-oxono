@@ -5,17 +5,17 @@ import Util.MoveStrategy;
 public class Player {
 
     private BagPiece playerBag;
-    private Color color;
+    private Colors colors;
     private MoveStrategy moveStrategy;
 
-    public Player(Color color, MoveStrategy moveStrategy) {
-        this.color = color;
-        this.playerBag = new BagPiece(color);
+    public Player(Colors colors, MoveStrategy moveStrategy) {
+        this.colors = colors;
+        this.playerBag = new BagPiece(colors);
         this.moveStrategy = moveStrategy;
     }
 
-    public Player(Color color) {
-        this(color, null);
+    public Player(Colors colors) {
+        this(colors, null);
     }
 
 
@@ -24,8 +24,8 @@ public class Player {
         return playerBag;
     }
 
-    public Color getColor() {
-        return color;
+    public Colors getColor() {
+        return colors;
     }
     public MoveStrategy getMoveStrategy() {
         return moveStrategy;
@@ -39,7 +39,7 @@ public class Player {
         return playerBag.countSymbol(symbol);
     }
     public String toString() {
-        return "Player{color=" + color + ", automated=" + isAutomated() + "}";
+        return "Player{color=" + colors + ", automated=" + isAutomated() + "}";
     }
 
 }

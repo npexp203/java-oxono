@@ -8,12 +8,6 @@ import model.GameModel;
 
 public class Main extends Application {
 
-    /**
-     * Starts the JavaFX application.
-     *
-     * @param primaryStage The main application window.
-     * @throws Exception    If an error occurs while starting the application.
-     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         GameModel model = new GameModel();

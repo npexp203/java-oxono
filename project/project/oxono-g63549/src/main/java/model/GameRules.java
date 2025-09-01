@@ -1,17 +1,15 @@
 package model;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameRules {
 
-    /**
-     * Checks if a totem is surrounded (all adjacent cells occupied).
-     */
+    private static final int[][] DIRECTIONS = {{0,1},{1,0},{0,-1},{-1,0}};
+
+
     public static boolean isEnclaved(Board board, Position pos) {
-        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-        for (int[] dir : directions) {
+        for (int[] dir : DIRECTIONS) {
             Position adjacent = new Position(pos.x() + dir[0], pos.y() + dir[1]);
             if (board.isValidCoordinate(adjacent) && board.isEmpty(adjacent)) {
                 return false;
@@ -20,16 +18,11 @@ public class GameRules {
         return true;
     }
 
-    /**
-     * Checks if the move is rectilinear (same row or same column).
-     */
     public static boolean isRectilinearMove(Position start, Position target) {
         return start.x() == target.x() || start.y() == target.y();
     }
 
-    /**
-     * Checks if the path between start and target is clear.
-     */
+
     public static boolean isPathClear(Board board, Position start, Position target) {
         int stepX = Integer.compare(target.x(), start.x());
         int stepY = Integer.compare(target.y(), start.y());
@@ -47,10 +40,7 @@ public class GameRules {
         return true;
     }
 
-    /**
-     * Handles the jump in case of enclosure.
-     * Returns the final position if a jump is possible, otherwise null.
-     */
+
     public static Position handleEnclavedJump(Board board, Totem totem, Position start, int[] direction) {
         int dx = direction[0];
         int dy = direction[1];
@@ -76,9 +66,7 @@ public class GameRules {
         return null;
     }
 
-    /**
-     * Moves the totem on the board, checking the rules.
-     */
+
     public static boolean moveTotem(Board board, Totem totem, Position target) {
         Position start = board.findTotemPosition(totem);
         if (start == null) {
@@ -86,8 +74,7 @@ public class GameRules {
         }
 
         if (isEnclaved(board, start)) {
-            int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-            for (int[] dir : directions) {
+            for (int[] dir : DIRECTIONS) {
                 Position finalPos = handleEnclavedJump(board, totem, start, dir);
                 if (finalPos != null && finalPos.equals(target)) {
                     board.removePiece(start);
@@ -114,58 +101,42 @@ public class GameRules {
         board.putPiece(target, totem);
         return true;
     }
-    private static final int[][] DIRECTIONS = {{0,1},{1,0},{0,-1},{-1,0}};
 
 
+    public static List<Position> getValidTotemPositions(Board board, Totem totem) {
+        List<Position> validMoves = new ArrayList<>();
+        Position start = board.findTotemPosition(totem);
 
-        /**
-         * Returns the list of valid positions for the totem from its current position on the board.
-         */
-        public static List<Position> getValidTotemPositions(Board board, Totem totem) {
-            List<Position> validMoves = new ArrayList<>();
-            Position start = board.findTotemPosition(totem);
-
-            if (isEnclaved(board, start)) {
-                for (int[] dir : DIRECTIONS) {
-                    Position finalPos = handleEnclavedJump(board, totem, start, dir);
-                    if (finalPos != null) {
-                        validMoves.add(finalPos);
-                    }
-                }
-                return validMoves;
-            }
-
-            // Normal movement (horizontal/vertical)
+        if (isEnclaved(board, start)) {
             for (int[] dir : DIRECTIONS) {
-                int x = start.x() + dir[0];
-                int y = start.y() + dir[1];
-                while (board.isValidCoordinate(new Position(x,y))) {
-                    Position current = new Position(x,y);
-                    if (board.getPiece(current) != null) {
-                        break; // We meet a piece, we stop
-                    }
-                    validMoves.add(current);
-                    x += dir[0];
-                    y += dir[1];
+                Position finalPos = handleEnclavedJump(board, totem, start, dir);
+                if (finalPos != null) {
+                    validMoves.add(finalPos);
                 }
             }
             return validMoves;
         }
 
-        /**
-         * Returns the list of valid positions for placing a token around the totem,
-         * from its current position on the board.
-         * (Not used by the strategy, but kept in case of future needs.)
-         */
+        for (int[] dir : DIRECTIONS) {
+            int x = start.x() + dir[0];
+            int y = start.y() + dir[1];
+            while (board.isValidCoordinate(new Position(x,y))) {
+                Position current = new Position(x,y);
+                if (board.getPiece(current) != null) {
+                    break;
+                }
+                validMoves.add(current);
+                x += dir[0];
+                y += dir[1];
+            }
+        }
+        return validMoves;
+    }
 
-    /**
-     * Returns the list of valid positions for placing a token around a given position (totemPos).
-     * This allows to calculate the positions of tokens based on the final position where the totem will be moved.
-     */
+
     public static List<Position> getValidTokenPositionsForPosition(Board board, Position totemPos) {
         List<Position> validPositions = new ArrayList<>();
 
-        // Vérifier les positions adjacentes normales
         for (int[] dir : DIRECTIONS) {
             Position adj = new Position(totemPos.x() + dir[0], totemPos.y() + dir[1]);
             if (board.isValidCoordinate(adj) && board.isEmpty(adj)) {
@@ -173,11 +144,10 @@ public class GameRules {
             }
         }
 
-        // Si aucune position adjacente valide ET que le totem est enclavé
         if (validPositions.isEmpty() && isEnclaved(board, totemPos)) {
-            // Règle B : placer sur n'importe quelle case libre du plateau
-            for (int i = 0; i < 6; i++) {
-                for (int j = 0; j < 6; j++) {
+            int boardSize = board.getSize();
+            for (int i = 0; i < boardSize; i++) {
+                for (int j = 0; j < boardSize; j++) {
                     Position pos = new Position(i, j);
                     if (board.isEmpty(pos)) {
                         validPositions.add(pos);
@@ -189,15 +159,12 @@ public class GameRules {
         return validPositions;
     }
 
-    /**
-     * Checks if the placement of a token is valid with respect to the current position of the totem on the board.
-     */
+
     public static boolean isValidTokenPlacement(Board board, Position totemPos, Position tokenPos) {
         if (!board.isValidCoordinate(tokenPos) || !board.isEmpty(tokenPos)) {
             return false;
         }
 
-        // Vérifier adjacence normale
         int dx = Math.abs(totemPos.x() - tokenPos.x());
         int dy = Math.abs(totemPos.y() - tokenPos.y());
         boolean isAdjacent = (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
@@ -206,39 +173,7 @@ public class GameRules {
             return true;
         }
 
-        // Si pas adjacent, vérifier si le totem est enclavé (règle B)
         if (isEnclaved(board, totemPos)) {
-            return true; // Peut placer n'importe où
-        }
-
-        return false;
-    }
-    /**
-     * Checks if a totem movement to a given position is valid.
-     *
-     * @param board    The current game board.
-     * @param totem    The totem we want to move.
-     * @param position The target position for the move.
-     * @return true if the move is valid, otherwise false.
-     */
-    public boolean isValidMove(Board board, Totem totem, Position position) {
-        // Checks if the target position is valid on the board
-        if (!board.isValidCoordinate(position)) {
-            return false;
-        }
-
-        // Checks if the target cell is empty
-        if (!board.isEmpty(position)) {
-            return false;
-        }
-
-        // Checks if the move respects the rules of totem movement
-        Position totemPosition = board.findTotemPosition(totem);
-        int dx = Math.abs(position.x() - totemPosition.x());
-        int dy = Math.abs(position.y() - totemPosition.y());
-
-        // Example: A totem can only move 1 cell in one direction
-        if ((dx <= 1) && (dy <= 1)) {
             return true;
         }
 
@@ -246,4 +181,91 @@ public class GameRules {
     }
 
 
+
+    public static boolean checkWin(Board board) {
+        int boardSize = board.getSize();
+
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                Position pos = new Position(i, j);
+                if (board.isEmpty(pos)) continue;
+
+                Piece piece = board.getPiece(pos);
+                if (piece instanceof Totem) continue;
+
+                if (checkColorAlignment(board, pos, 1, 0) ||
+                        checkColorAlignment(board, pos, 0, 1) ||
+                        checkSymbolAlignment(board, pos, 1, 0) ||
+                        checkSymbolAlignment(board, pos, 0, 1)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    private static boolean checkColorAlignment(Board board, Position start, int dx, int dy) {
+        Piece startPiece = board.getPiece(start);
+        if (startPiece instanceof Totem) {
+            return false;
+        }
+
+        Colors targetColors = startPiece.getColor();
+
+        for (int step = 0; step < 4; step++) {
+            int x = start.x() + step * dx;
+            int y = start.y() + step * dy;
+            Position pos = new Position(x, y);
+
+            if (!board.isValidCoordinate(pos)) {
+                return false;
+            }
+
+            Piece piece = board.getPiece(pos);
+            if (piece == null || piece instanceof Totem || piece.getColor() != targetColors) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean checkSymbolAlignment(Board board, Position start, int dx, int dy) {
+        Piece startPiece = board.getPiece(start);
+        if (startPiece instanceof Totem) {
+            return false;
+        }
+
+        Symbol targetSymbol = startPiece.getSymbol();
+
+        for (int step = 0; step < 4; step++) {
+            int x = start.x() + step * dx;
+            int y = start.y() + step * dy;
+            Position pos = new Position(x, y);
+
+            if (!board.isValidCoordinate(pos)) return false;
+
+            Piece piece = board.getPiece(pos);
+            if (piece == null || piece instanceof Totem || piece.getSymbol() != targetSymbol) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    public static boolean isMovePossible(Board board) {
+        int boardSize = board.getSize();
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                Position pos = new Position(i, j);
+                if (board.isEmpty(pos)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

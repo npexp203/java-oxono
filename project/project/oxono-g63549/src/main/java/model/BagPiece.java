@@ -6,16 +6,15 @@ import java.util.List;
 public class BagPiece {
     private List<Piece> bagPiece;
 
-    public BagPiece(Color color) {
+    public BagPiece(Colors colors) {
         bagPiece = new ArrayList<>(16);
         for (int i = 0; i < 8; i++) {
-            bagPiece.add(new Token(color, Symbol.O));
-            bagPiece.add(new Token(color, Symbol.X));
+            bagPiece.add(new Token(colors, Symbol.O));
+            bagPiece.add(new Token(colors, Symbol.X));
         }
     }
 
     
-    // Dans BagPiece
     public int countSymbol(Symbol symbol) {
         int count = 0;
         for (Piece p : bagPiece) {
@@ -37,15 +36,10 @@ public class BagPiece {
                 return bagPiece.remove(i);
             }
         }
-        return null; // ou throw exception
+        return null;
     }
 
-    /**
-     * Checks if there are pieces with the specified symbol.
-     */
-    public boolean hasPiece(Symbol symbol) {
-        return countSymbol(symbol) > 0;
-    }
+
 
     /**
      * Returns the total number of pieces remaining.
@@ -60,7 +54,6 @@ public class BagPiece {
     public boolean isEmpty() {
         return bagPiece.isEmpty();
     }
-    // À ajouter dans BagPiece.java
     public void addPiece(Piece piece) {
         bagPiece.add(piece);
     }

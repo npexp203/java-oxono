@@ -1,6 +1,6 @@
 package model;
 
-public class    Move {
+public class Move {
     private final Position totemTarget;
     private final Position tokenTarget;
     private final Symbol tokenSymbol;
