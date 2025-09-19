@@ -1,5 +1,6 @@
 # Oxono game with french interface using Composite, Observer and Strategy design patterns.
 
+<img width="993" height="626" alt="image" src="https://github.com/user-attachments/assets/65d4c077-d528-4ec4-ba77-29238fd91542" />
 ## Requirements
 - **Java 21** or higher
 - **Maven** (bundled with IntelliJ IDEA)
@@ -17,4 +18,4 @@ From the project root, run:
 mvn clean javafx:run
 
 
-<img width="993" height="626" alt="image" src="https://github.com/user-attachments/assets/65d4c077-d528-4ec4-ba77-29238fd91542" />
+
